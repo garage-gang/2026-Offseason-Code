@@ -28,21 +28,21 @@ public class DriveConstants {
         new Translation2d(-TRACK_WIDTH / 2.0, -WHEEL_BASE / 2.0)
       };
 
-  public static final Rotation2d FRONT_LEFT_ZERO_ROTATION = new Rotation2d(4.71238);
-  public static final Rotation2d FRONT_RIGHT_ZERO_ROTATION = new Rotation2d(0.0);
+  public static final Rotation2d FRONT_LEFT_ZERO_ROTATION = new Rotation2d(0 + 3.14 + 1.57);
+  public static final Rotation2d FRONT_RIGHT_ZERO_ROTATION = new Rotation2d(0);
   public static final Rotation2d BACK_LEFT_ZERO_ROTATION = new Rotation2d(3.14159);
   public static final Rotation2d BACK_RIGHT_ZERO_ROTATION = new Rotation2d(1.57079);
 
   public static final int PIGEON_CAN_ID = 9;
 
-  public static final int FRONT_LEFT_DRIVE_CAN_ID = 2;
+  public static final int FRONT_LEFT_DRIVE_CAN_ID = 8;
   public static final int BACK_LEFT_DRIVE_CAN_ID = 4;
-  public static final int FRONT_RIGHT_DRIVE_CAN_ID = 8;
+  public static final int FRONT_RIGHT_DRIVE_CAN_ID = 2;
   public static final int BACK_RIGHT_DRIVE_CAN_ID = 6;
 
-  public static final int FRONT_LEFT_TURN_CAN_ID = 1;
+  public static final int FRONT_LEFT_TURN_CAN_ID = 7;
   public static final int BACK_LEFT_TURN_CAN_ID = 3;
-  public static final int FRONT_RIGHT_TURN_CAN_ID = 7;
+  public static final int FRONT_RIGHT_TURN_CAN_ID = 1;
   public static final int BACK_RIGHT_TURN_CAN_ID = 5;
 
   // Drive motor configuration
