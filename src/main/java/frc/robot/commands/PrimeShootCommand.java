@@ -30,6 +30,8 @@ public class PrimeShootCommand extends Command {
   private static final LoggedTunableNumber wheelVelocityConfig =
       new LoggedTunableNumber("PrimeShootCommand/Wheel/Velocity", 3500);
 
+  private static final LoggedTunableNumber rotationVelocityConfig =
+      new LoggedTunableNumber("PrimeShootCommand/Rotation/Angle", 90);
   private static final LoggedTunableNumber elevationAngleConfig =
       new LoggedTunableNumber("PrimeShootCommand/Elevation/Position", 5);
   private static final LoggedTunableNumber wheelToleranceConfig =
@@ -65,7 +67,7 @@ public class PrimeShootCommand extends Command {
     switch (shootingType) {
       case SIMPLE_SHOOT:
         targetTurretRotation = Rotation2d.fromDegrees(5.0);
-        targetFlywheelSpeed = 3500.0;
+        targetFlywheelSpeed = 4000.0;
         targetElevationAngle = Rotation2d.fromDegrees(0.0);
         break;
       case HUB_SHOOT:
@@ -75,7 +77,6 @@ public class PrimeShootCommand extends Command {
         targetElevationAngle =
             Rotation2d.fromDegrees(
                 Constants.ShooterConstants.HOOD_HUB_DISTANCE_ANGLE_TABLE.get(turretHubDistance()));
-
         break;
       case ALLIANCE_SHOOT:
         targetTurretRotation =
@@ -86,6 +87,12 @@ public class PrimeShootCommand extends Command {
         break;
       case TUNING_SHOOT:
         targetTurretRotation = updateTurretRotation();
+        targetFlywheelSpeed = wheelVelocityConfig.get();
+        targetElevationAngle = Rotation2d.fromDegrees(elevationAngleConfig.get());
+        turretHubDistance();
+        break;
+      case TRENCH_SHOT:
+        targetTurretRotation = Rotation2d.fromDegrees(rotationVelocityConfig.get());
         targetFlywheelSpeed = wheelVelocityConfig.get();
         targetElevationAngle = Rotation2d.fromDegrees(elevationAngleConfig.get());
         turretHubDistance();
@@ -174,7 +181,7 @@ public class PrimeShootCommand extends Command {
   }
 
   private double fudgeFactor() {
-    return drive.getPose().getY() > Constants.FieldConstants.FIELD_WIDTH / 2 ? -8 : 8;
+    return drive.getPose().getY() > Constants.FieldConstants.FIELD_WIDTH / 2 ? -6 : 6;
   }
 
   private Translation2d adjustTurretPosition() {
@@ -232,6 +239,7 @@ public class PrimeShootCommand extends Command {
     SIMPLE_SHOOT,
     HUB_SHOOT,
     ALLIANCE_SHOOT,
-    TUNING_SHOOT
+    TUNING_SHOOT,
+    TRENCH_SHOT
   };
 }
