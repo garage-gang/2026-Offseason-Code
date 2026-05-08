@@ -159,7 +159,17 @@ public class RobotContainer {
         new PrimeShootCommand(shooter, drive, intake, ShootingType.HUB_SHOOT);
     PrimeShootCommand primeShootCommandSecond =
         new PrimeShootCommand(shooter, drive, intake, ShootingType.HUB_SHOOT);
+    PrimeShootCommand primeShootCommandThird =
+        new PrimeShootCommand(shooter, drive, intake, ShootingType.HUB_SHOOT);
     PrimeShootCommand primeShootCommandFourth =
+        new PrimeShootCommand(shooter, drive, intake, ShootingType.HUB_SHOOT);
+    PrimeShootCommand primeShootCommandFifth =
+        new PrimeShootCommand(shooter, drive, intake, ShootingType.HUB_SHOOT);
+    PrimeShootCommand primeShootCommandSix =
+        new PrimeShootCommand(shooter, drive, intake, ShootingType.HUB_SHOOT);
+    PrimeShootCommand primeShootCommandSeven =
+        new PrimeShootCommand(shooter, drive, intake, ShootingType.HUB_SHOOT);
+    PrimeShootCommand primeShootCommandEight =
         new PrimeShootCommand(shooter, drive, intake, ShootingType.HUB_SHOOT);
 
     PrimeShootCommand autoPrimeShootCommand =
@@ -178,6 +188,8 @@ public class RobotContainer {
           PathPlannerPath.fromPathFile("LONG_SHOT_DOUBLE_AUTO_BBYYYYY");
       PathPlannerPath doubleCollectShootTwo =
           PathPlannerPath.fromPathFile("LONG_SHOT_DOUBLE_AUTO_BBYYYYY_TWO");
+      PathPlannerPath trenchShoot = PathPlannerPath.fromPathFile("Copy of Left_Side_Trench_Shoot");
+      PathPlannerPath depotShoot = PathPlannerPath.fromPathFile("Center_Depot_Shoot");
 
       autoChooser.addOption(
           "Left_Side_Collect_Shoot",
@@ -212,23 +224,29 @@ public class RobotContainer {
                                               primeShootCommand))
                                       .alongWith(
                                           Commands.repeatingSequence(
-                                              Commands.runOnce(
-                                                  () -> intake.setExtenderVoltage(-2.5)),
-                                              Commands.waitSeconds(0.5),
-                                              Commands.runOnce(
-                                                  () -> intake.setExtenderVoltage(2.5)),
-                                              Commands.waitSeconds(0.5)))))));
-      // .alongWith(new ShakeIntakeComand(intake))))));
+                                                  Commands.runOnce(
+                                                      () ->
+                                                          intake.setExtenderPos(
+                                                              Rotation2d.fromDegrees(30))),
+                                                  Commands.waitSeconds(1),
+                                                  Commands.runOnce(
+                                                      () ->
+                                                          intake.setExtenderPos(
+                                                              Rotation2d.fromDegrees(75))),
+                                                  Commands.waitSeconds(1))
+                                              .alongWith(
+                                                  Commands.run(
+                                                      () -> intake.setRollerVoltage(-12))))))));
 
       autoChooser.addOption(
-          "LEFTSIDE_DOUBLE_COLLECT_SHOOTER_BBYYYYYYY",
+          "Right_Side_Collect_Shoot",
           Commands.runOnce(
                   () -> {
                     var startPose =
                         // drive.setPose(
                         DriverStation.getAlliance().get().equals(Alliance.Blue)
-                            ? doubleCollectShoot.getPathPoses().get(0)
-                            : doubleCollectShoot.flipPath().getPathPoses().get(0);
+                            ? startingAutoPath.mirrorPath().getPathPoses().get(0)
+                            : startingAutoPath.mirrorPath().flipPath().getPathPoses().get(0);
                     if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
                       startPose =
                           new Pose2d(
@@ -242,30 +260,249 @@ public class RobotContainer {
                   Commands.runOnce(() -> intake.extendExtender())
                       .alongWith(Commands.run(() -> intake.intakeFuel()))
                       .alongWith(
-                          AutoBuilder.followPath(doubleCollectShoot)
+                          AutoBuilder.followPath(startingAutoPath.mirrorPath())
                               .andThen(
-                                  Commands.waitSeconds(4.0)
-                                      .deadlineFor(
-                                          primeShootCommandSecond
+                                  primeShootCommandEight
+                                      .alongWith(
+                                          new ShootCommand(
+                                              elevator,
+                                              primeShootCommandEight,
+                                              primeShootCommandEight,
+                                              primeShootCommandEight))
+                                      .alongWith(
+                                          Commands.repeatingSequence(
+                                                  Commands.runOnce(
+                                                      () ->
+                                                          intake.setExtenderPos(
+                                                              Rotation2d.fromDegrees(30))),
+                                                  Commands.waitSeconds(1),
+                                                  Commands.runOnce(
+                                                      () ->
+                                                          intake.setExtenderPos(
+                                                              Rotation2d.fromDegrees(75))),
+                                                  Commands.waitSeconds(1))
                                               .alongWith(
-                                                  new ShootCommand(
-                                                      elevator,
-                                                      primeShootCommandSecond,
-                                                      primeShootCommandSecond,
-                                                      primeShootCommandSecond))
+                                                  Commands.run(
+                                                      () -> intake.setRollerVoltage(-12))))))));
+      // .alongWith(new ShakeIntakeComand(intake))))));
+      autoChooser.addOption(
+          "Left_Side_Trench_Shoot",
+          Commands.runOnce(
+                  () -> {
+                    var startPose =
+                        // drive.setPose(
+                        DriverStation.getAlliance().get().equals(Alliance.Blue)
+                            ? trenchShoot.getPathPoses().get(0)
+                            : trenchShoot.flipPath().getPathPoses().get(0);
+                    if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
+                      startPose =
+                          new Pose2d(
+                              startPose.getTranslation(),
+                              startPose.getRotation().rotateBy(Rotation2d.kPi));
+                    }
+                    drive.setPose(startPose);
+                    Logger.recordOutput("Debug/StartPose", startPose);
+                  })
+              .andThen(
+                  Commands.runOnce(() -> intake.extendExtender())
+                      .alongWith(Commands.run(() -> intake.intakeFuel()))
+                      .alongWith(
+                          AutoBuilder.followPath(trenchShoot)
+                              .andThen(
+                                  primeShootCommandThird
+                                      .alongWith(
+                                          new ShootCommand(
+                                              elevator,
+                                              primeShootCommandThird,
+                                              primeShootCommandThird,
+                                              primeShootCommandThird))
+                                      .alongWith(
+                                          Commands.repeatingSequence(
+                                                  Commands.runOnce(
+                                                      () ->
+                                                          intake.setExtenderPos(
+                                                              Rotation2d.fromDegrees(30))),
+                                                  Commands.waitSeconds(1),
+                                                  Commands.runOnce(
+                                                      () ->
+                                                          intake.setExtenderPos(
+                                                              Rotation2d.fromDegrees(75))),
+                                                  Commands.waitSeconds(1))
                                               .alongWith(
-                                                  Commands.repeatingSequence(
-                                                      Commands.runOnce(
-                                                          () -> intake.setExtenderVoltage(0.5)),
-                                                      Commands.waitSeconds(0.5),
-                                                      Commands.runOnce(
-                                                          () -> intake.setExtenderVoltage(-0.5)),
-                                                      Commands.waitSeconds(0.5))))
-                                      .andThen(
-                                          Commands.waitSeconds(4.0)
-                                              .andThen(
-                                                  AutoBuilder.followPath(
-                                                      doubleCollectShootTwo)))))));
+                                                  Commands.run(
+                                                      () -> intake.setRollerVoltage(-12))))))));
+
+      autoChooser.addOption(
+          "Right_Side_Trench_Shoot",
+          Commands.runOnce(
+                  () -> {
+                    var startPose =
+                        DriverStation.getAlliance().get().equals(Alliance.Blue)
+                            ? trenchShoot.mirrorPath().getPathPoses().get(0)
+                            : trenchShoot.mirrorPath().flipPath().getPathPoses().get(0);
+                    if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
+                      startPose =
+                          new Pose2d(
+                              startPose.getTranslation(),
+                              startPose.getRotation().rotateBy(Rotation2d.kPi));
+                    }
+                    drive.setPose(startPose);
+                    Logger.recordOutput("Debug/StartPose", startPose);
+                  })
+              .andThen(
+                  Commands.runOnce(() -> intake.extendExtender())
+                      .alongWith(Commands.run(() -> intake.intakeFuel()))
+                      .alongWith(
+                          AutoBuilder.followPath(trenchShoot.mirrorPath())
+                              .andThen(
+                                  primeShootCommandSeven
+                                      .alongWith(
+                                          new ShootCommand(
+                                              elevator,
+                                              primeShootCommandSeven,
+                                              primeShootCommandSeven,
+                                              primeShootCommandSeven))
+                                      .alongWith(
+                                          Commands.repeatingSequence(
+                                                  Commands.runOnce(
+                                                      () ->
+                                                          intake.setExtenderPos(
+                                                              Rotation2d.fromDegrees(30))),
+                                                  Commands.waitSeconds(1),
+                                                  Commands.runOnce(
+                                                      () ->
+                                                          intake.setExtenderPos(
+                                                              Rotation2d.fromDegrees(75))),
+                                                  Commands.waitSeconds(1))
+                                              .alongWith(
+                                                  Commands.run(
+                                                      () -> intake.setRollerVoltage(-12))))))));
+
+      //   autoChooser.addOption(
+      //       "LEFTSIDE_DOUBLE_COLLECT_SHOOTER_BBYYYYYYY",
+      //       Commands.runOnce(
+      //               () -> {
+      //                 var startPose =
+      //                     // drive.setPose(
+      //                     DriverStation.getAlliance().get().equals(Alliance.Blue)
+      //                         ? doubleCollectShoot.getPathPoses().get(0)
+      //                         : doubleCollectShoot.flipPath().getPathPoses().get(0);
+      //                 if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
+      //                   startPose =
+      //                       new Pose2d(
+      //                           startPose.getTranslation(),
+      //                           startPose.getRotation().rotateBy(Rotation2d.kPi));
+      //                 }
+      //                 drive.setPose(startPose);
+      //                 Logger.recordOutput("Debug/StartPose", startPose);
+      //               })
+      //           .andThen(
+      //               Commands.runOnce(() -> intake.extendExtender())
+      //                   .alongWith(Commands.run(() -> intake.intakeFuel()))
+      //                   .alongWith(
+      //                       AutoBuilder.followPath(doubleCollectShoot)
+      //                           .deadlineFor(
+      //                               primeShootCommandSecond.alongWith(
+      //                                   new ShootCommand(
+      //                                       elevator,
+      //                                       primeShootCommandSecond,
+      //                                       primeShootCommandSecond,
+      //                                       primeShootCommandSecond)))
+      //                           .alongWith(
+      //                               Commands.repeatingSequence(
+      //                                       Commands.runOnce(
+      //                                           () ->
+      //                                               intake.setExtenderPos(
+      //                                                   Rotation2d.fromDegrees(30))),
+      //                                       Commands.waitSeconds(1),
+      //                                       Commands.runOnce(
+      //                                           () ->
+      //                                               intake.setExtenderPos(
+      //                                                   Rotation2d.fromDegrees(75))),
+      //                                       Commands.waitSeconds(1))
+      //                                   .alongWith(Commands.run(() ->
+      // intake.setRollerVoltage(-12))))
+      //                           .andThen(Commands.waitSeconds(4.0))
+      //                           .deadlineFor(AutoBuilder.followPath(doubleCollectShootTwo))
+      //                           .alongWith(Commands.runOnce(() -> intake.extendExtender()))
+      //                           .alongWith(Commands.run(() -> intake.intakeFuel()))
+      //                           .deadlineFor(
+      //                               primeShootCommandFifth
+      //                                   .alongWith(
+      //                                       new ShootCommand(
+      //                                           elevator,
+      //                                           primeShootCommandFifth,
+      //                                           primeShootCommandFifth,
+      //                                           primeShootCommandFifth))
+      //                                   .alongWith(
+      //                                       Commands.repeatingSequence(
+      //                                               Commands.runOnce(
+      //                                                       () ->
+      //                                                           intake.setExtenderPos(
+      //                                                               Rotation2d.fromDegrees(30))),
+      //                                                   Commands.waitSeconds(1),
+      //                                               Commands.runOnce(
+      //                                                       () ->
+      //                                                           intake.setExtenderPos(
+      //                                                               Rotation2d.fromDegrees(75))),
+      //                                                   Commands.waitSeconds(1))
+      //                                           .alongWith(
+      //                                               Commands.run(
+      //                                                   () ->
+      // intake.setRollerVoltage(-12))))))));
+
+      //   autoChooser.addOption(
+      //       "Center_Depot_Shoot",
+      //       Commands.runOnce(
+      //               () -> {
+      //                 var startPose =
+      //                     // drive.setPose(
+      //                     DriverStation.getAlliance().get().equals(Alliance.Blue)
+      //                         ? depotShoot.getPathPoses().get(0)
+      //                         : depotShoot.flipPath().getPathPoses().get(0);
+      //                 if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
+      //                   startPose =
+      //                       new Pose2d(
+      //                           startPose.getTranslation(),
+      //                           startPose.getRotation().rotateBy(Rotation2d.kPi));
+      //                 }
+      //                 drive.setPose(startPose);
+      //                 Logger.recordOutput("Debug/StartPose", startPose);
+      //               })
+      //           .andThen(
+      //               Commands.runOnce(() -> intake.extendExtender())
+      //                   .alongWith(Commands.run(() -> intake.intakeFuel()))
+      //                   .alongWith(
+      //                       AutoBuilder.followPath(depotShoot)
+      //                           .andThen(
+      //                               Commands.waitSeconds(4.0)
+      //                                   .deadlineFor(
+      //                                       primeShootCommandSix
+      //                                           .alongWith(
+      //                                               new ShootCommand(
+      //                                                   elevator,
+      //                                                   primeShootCommandSix,
+      //                                                   primeShootCommandSix,
+      //                                                   primeShootCommandSix))
+      //                                           .alongWith(
+      //                                               Commands.repeatingSequence(
+      //                                                       Commands.runOnce(
+      //                                                           () ->
+      //                                                               intake.setExtenderPos(
+      //
+      // Rotation2d.fromDegrees(30))),
+      //                                                       Commands.waitSeconds(1),
+      //                                                       Commands.runOnce(
+      //                                                           () ->
+      //                                                               intake.setExtenderPos(
+      //
+      // Rotation2d.fromDegrees(75))),
+      //                                                       Commands.waitSeconds(1))
+      //                                                   .alongWith(
+      //                                                       Commands.run(
+      //                                                           () ->
+      //                                                               intake.setRollerVoltage(
+      //                                                                   -12)))))))));
 
       //    drive.setPose(startingAutoPath.getPathPoses().get(0)
       //   autoChooser.addOption(
@@ -364,24 +601,7 @@ public class RobotContainer {
                 })
             .ignoringDisable(true));
 
-    double shiftTimer = 20;
-
-    while (shiftTimer >= 0) {
-      try {
-        try {
-          Thread.sleep(1000);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-        shiftTimer--;
-      } finally {
-      }
-    }
-
-    if (shiftTimer == 0) {}
-
-    // Timer for GameTime Shifts tm
-    SmartDashboard.putNumber("Shift Time Remaining", shiftTimer);
+    SmartDashboard.putNumber("GameTime", DriverStation.getMatchTime());
 
     // Reset gyro to 0° when Y button is pressed
     driverController
@@ -415,11 +635,12 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(
             Commands.repeatingSequence(
-                Commands.runOnce(() -> intake.setExtenderVoltage(-2)),
-                Commands.waitSeconds(0.5),
-                Commands.runOnce(() -> intake.setExtenderVoltage(2)),
-                Commands.waitSeconds(0.5)))
-        .onFalse(Commands.runOnce(() -> intake.setExtenderVoltage(0)));
+                    Commands.runOnce(() -> intake.setExtenderPos(Rotation2d.fromDegrees(30))),
+                    Commands.waitSeconds(1),
+                    Commands.runOnce(() -> intake.setExtenderPos(Rotation2d.fromDegrees(75))),
+                    Commands.waitSeconds(1))
+                .alongWith(Commands.run(() -> intake.setRollerVoltage(-12))))
+        .onFalse(Commands.runOnce(() -> intake.setRollerVoltage(0)));
 
     // manually retracts the intake to desired location via voltages
     // double LTriggerVal = coDriverController.getLeftTriggerAxis();
@@ -444,22 +665,97 @@ public class RobotContainer {
 
     PrimeShootCommand primeShootCommand =
         new PrimeShootCommand(shooter, drive, intake, ShootingType.HUB_SHOOT);
+
     PrimeShootCommand simplePrimeShootCommand =
         new PrimeShootCommand(shooter, drive, intake, ShootingType.SIMPLE_SHOOT);
     PrimeShootCommand alliancePrimeShootCommand =
-        new PrimeShootCommand(shooter, drive, intake, ShootingType.TUNING_SHOOT);
+        new PrimeShootCommand(shooter, drive, intake, ShootingType.ALLIANCE_SHOOT);
+    PrimeShootCommand trenchPrimeShootCommand =
+        new PrimeShootCommand(shooter, drive, intake, ShootingType.TRENCH_SHOT);
 
     coDriverController.povRight().whileTrue(primeShootCommand);
 
     coDriverController.povLeft().whileTrue(alliancePrimeShootCommand);
 
-    coDriverController.x().whileTrue(simplePrimeShootCommand);
+    coDriverController.x().whileTrue(trenchPrimeShootCommand);
+
+    coDriverController.leftBumper().whileTrue(simplePrimeShootCommand);
 
     coDriverController
         .a()
         .whileTrue(
             new ShootCommand(
                 elevator, primeShootCommand, simplePrimeShootCommand, alliancePrimeShootCommand));
+  }
+
+  public static double getTimeLeftUntilSwitch() {
+    var currentTime = DriverStation.getMatchTime();
+    if (DriverStation.isAutonomous()) {
+      return currentTime;
+    } else if (currentTime > 130) {
+      return currentTime - 130;
+    } else if (currentTime > 105) {
+      return currentTime - 105;
+    } else if (currentTime > 80) {
+      return currentTime - 80;
+    } else if (currentTime > 55) {
+      return currentTime - 55;
+    } else if (currentTime > 30) {
+      return currentTime - 30;
+    } else {
+      return Math.max(0, currentTime);
+    }
+  }
+
+  public static boolean isBlueShift() {
+    String allianceLead = DriverStation.getGameSpecificMessage();
+    var currentTime = DriverStation.getMatchTime();
+    boolean isBlue = DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Blue);
+    boolean output;
+    if (DriverStation.isAutonomous()) {
+      output = isBlue;
+    } else if (currentTime > 130) {
+      output = isBlue;
+    } else if (currentTime > 105) {
+      output = allianceLead.equals("B");
+    } else if (currentTime > 80) {
+      output = !allianceLead.equals("B");
+    } else if (currentTime > 55) {
+      output = allianceLead.equals("B");
+    } else if (currentTime > 30) {
+      output = !allianceLead.equals("B");
+    } else {
+      output = isBlue;
+    }
+    return output;
+  }
+
+  public static boolean isOurShift() {
+    String allianceLead = DriverStation.getGameSpecificMessage();
+    var currentTime = DriverStation.getMatchTime();
+    boolean isBlue = DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Blue);
+    boolean output;
+    if (DriverStation.isAutonomous()) {
+      output = true;
+    } else if (currentTime > 130) {
+      output = true;
+    } else if (currentTime > 105) {
+      output = allianceLead.equals("B") == isBlue;
+    } else if (currentTime > 80) {
+      output = !allianceLead.equals("B") == isBlue;
+    } else if (currentTime > 55) {
+      output = allianceLead.equals("B") == isBlue;
+    } else if (currentTime > 30) {
+      output = !allianceLead.equals("B") == isBlue;
+
+    } else {
+      output = true;
+    }
+    return output;
+  }
+
+  public Pose2d getDrivePose() {
+    return drive.getPose();
   }
 
   /**
