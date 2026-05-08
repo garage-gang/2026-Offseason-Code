@@ -158,7 +158,7 @@ public final class Constants {
 
     public final class HoodConstants {
       public static final Rotation2d MIN_HOOD_ANGLE = Rotation2d.fromDegrees(0);
-      public static final Rotation2d MAX_HOOD_ANGLE = Rotation2d.fromDegrees(45);
+      public static final Rotation2d MAX_HOOD_ANGLE = Rotation2d.fromDegrees(40);
       public static final double HOOD_MOI = 0.0001;
       public static final double STATOR_CURRENT_LIMIT = 35;
       public static final double SUPPLY_CURRENT_LIMIT = 35;
@@ -206,7 +206,7 @@ public final class Constants {
       FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(5.503, 5000.0);
       FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(1.994, 3250.0);
       FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(3.217, 3700.0);
-      FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(4.788, 4700.0);
+      FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(4.788, 5000.0);
       FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(5.686, 5700.0);
     }
 
