@@ -22,8 +22,8 @@ public class VisionConstants {
   public static String camera1Name = "April2";
   public static String camera2Name = "April3";
   public static String camera3Name = "April4";
-  //STUDENT TODO: FIX THE FORMATTING PLEASE FOR THE LOVE OF MY SANITY -- Drew. 
-    public static String camera4Name = "April5";
+  // STUDENT TODO: FIX THE FORMATTING PLEASE FOR THE LOVE OF MY SANITY -- Drew.
+  public static String camera4Name = "April5";
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
   public static Transform3d robotToCamera0 =
@@ -35,6 +35,9 @@ public class VisionConstants {
       new Transform3d(-0.308446, 0.237355, 0.150, new Rotation3d(0.0, -0.2, Math.PI * 7.0 / 6.0));
   public static Transform3d robotToCamera3 =
       new Transform3d(-0.290416, 0.315931, 0.150, new Rotation3d(0.0, -0.2, Math.PI * 1.0 / 2.0));
+  // Creating a benchtest robot camera transform. Remove before a match.
+  public static Transform3d robotToCamera5 =
+      new Transform3d(0.1773428, 0.1070864, 0.4154043, new Rotation3d(0.0, 0.463646716, 0.0));
   public static Transform3d tagToGoal =
       new Transform3d(0, 2.5, 0.0, new Rotation3d(0.0, -0.2, 0.0));
 
