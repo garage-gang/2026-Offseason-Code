@@ -18,26 +18,28 @@ public class VisionConstants {
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
   // Camera names, must match names configured on coprocessor
-  public static String camera0Name = "April1";
-  public static String camera1Name = "April2";
-  public static String camera2Name = "April3";
-  public static String camera3Name = "April4";
+  // TODO: Update names in PhotonVision to a more logical naming scheme. See below names.
+  public static String backElectronicsCamera = "backElectronicsSide";
+  public static String backTurretCamera = "backTurretSide";
+  public static String backCenterCamera = "backCenter";
+
   // STUDENT TODO: FIX THE FORMATTING PLEASE FOR THE LOVE OF MY SANITY -- Drew.
-  public static String camera4Name = "April5";
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
-  public static Transform3d robotToCamera0 =
-      new Transform3d(-0.289166, -0.318516, 0.150, new Rotation3d(0.0, -0.2, Math.PI * 1.5));
-  public static Transform3d robotToCamera1 =
-      new Transform3d(
-          -0.308500, -0.239862, 0.150, new Rotation3d(0.0, -0.2, Math.PI - 0.521993073));
-  public static Transform3d robotToCamera2 =
-      new Transform3d(-0.308446, 0.237355, 0.150, new Rotation3d(0.0, -0.2, Math.PI * 7.0 / 6.0));
-  public static Transform3d robotToCamera3 =
-      new Transform3d(-0.290416, 0.315931, 0.150, new Rotation3d(0.0, -0.2, Math.PI * 1.0 / 2.0));
-  // Creating a benchtest robot camera transform. Remove before a match.
-  public static Transform3d robotToCamera5 =
-      new Transform3d(0.1773428, 0.1070864, 0.4154043, new Rotation3d(0.0, 0.463646716, 0.0));
+
+  // New camera transforms updated 07/18/2026
+  public static Transform3d backElectronicsCameraToRobot =
+      new Transform3d(0.2936, 0.3084, 0.2145, new Rotation3d(0.0, 0.0, -1.5708));
+
+  public static Transform3d backTurretCameraToRobot =
+      new Transform3d(0.2936, 0.3084, 0.2145, new Rotation3d(0.0, 0.0, 1.5708));
+
+  public static Transform3d backCenterToRobot =
+      new Transform3d(0.1773428, 0.1070864, 0.4154043, new Rotation3d(0.0, -0.463646716, 0.0));
+
+  // The below transform does not seem to be part of the vision transforms for estimating robot
+  // position.
+  // Moving it down a few lines for organization.
   public static Transform3d tagToGoal =
       new Transform3d(0, 2.5, 0.0, new Rotation3d(0.0, -0.2, 0.0));
 
