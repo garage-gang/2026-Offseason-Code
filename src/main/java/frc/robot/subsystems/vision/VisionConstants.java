@@ -57,12 +57,12 @@ public class VisionConstants {
   // (Adjust to trust some cameras more than others)
   public static double[] cameraStdDevFactors =
       new double[] {
-        1.0, // Camera 0
-        1.0, // Camera 1
-        1.0 // Camera 2
+        0.004, // Camera 0, backElectronicsSide
+        0.004, // Camera 1, backTurretSide
+        0.04 // Camera 2, backCenter
       };
 
   // Multipliers to apply for MegaTag 2 observations
-  public static double linearStdDevMegatag2Factor = 0; // More stable than full 3D solve
+  public static double linearStdDevMegatag2Factor = 0 ; // More stable than full 3D solve
   public static double angularStdDevMegatag2Factor = 0; // No rotation data available
 }
