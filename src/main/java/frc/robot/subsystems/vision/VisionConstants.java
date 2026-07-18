@@ -22,7 +22,8 @@ public class VisionConstants {
   public static String camera1Name = "April2";
   public static String camera2Name = "April3";
   public static String camera3Name = "April4";
-
+  //STUDENT TODO: FIX THE FORMATTING PLEASE FOR THE LOVE OF MY SANITY -- Drew. 
+    public static String camera4Name = "April5";
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
   public static Transform3d robotToCamera0 =
