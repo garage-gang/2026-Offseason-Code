@@ -29,13 +29,13 @@ public class VisionConstants {
 
   // New camera transforms updated 07/18/2026
   public static Transform3d backElectronicsCameraToRobot =
-      new Transform3d(0.2936, 0.3084, 0.2145, new Rotation3d(0.0, 0.0, -1.5708));
+      new Transform3d(0.2936, 0.3084, 0.2145, new Rotation3d(-0.0, 0.0, 1.5708));
 
   public static Transform3d backTurretCameraToRobot =
-      new Transform3d(0.2936, 0.3084, 0.2145, new Rotation3d(0.0, 0.0, 1.5708));
+      new Transform3d(0.2936, 0.3084, 0.2145, new Rotation3d(-0.0, -0.0, -1.5708));
 
   public static Transform3d backCenterToRobot =
-      new Transform3d(0.1773428, 0.1070864, 0.4154043, new Rotation3d(0.0, -0.463646716, 0.0));
+      new Transform3d(0.1773428, 0.1070864, 0.4154043, new Rotation3d(-0.0, 0.463646716, 0.0));
 
   // The below transform does not seem to be part of the vision transforms for estimating robot
   // position.
@@ -49,8 +49,8 @@ public class VisionConstants {
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)
-  public static double linearStdDevBaseline = 0.1; // Meters
-  public static double angularStdDevBaseline = 0.06; // Radians
+  public static double linearStdDevBaseline = 0; // Meters
+  public static double angularStdDevBaseline = 0; // Radians
 
   // Standard deviation multipliers for each camera
   // (Adjust to trust some cameras more than others)
@@ -58,11 +58,10 @@ public class VisionConstants {
       new double[] {
         1.0, // Camera 0
         1.0, // Camera 1
-        1.0  // Camera 2
+        1.0 // Camera 2
       };
 
   // Multipliers to apply for MegaTag 2 observations
-  public static double linearStdDevMegatag2Factor = 0.4; // More stable than full 3D solve
-  public static double angularStdDevMegatag2Factor =
-      Double.POSITIVE_INFINITY; // No rotation data available
+  public static double linearStdDevMegatag2Factor = 0; // More stable than full 3D solve
+  public static double angularStdDevMegatag2Factor = 0; // No rotation data available
 }
