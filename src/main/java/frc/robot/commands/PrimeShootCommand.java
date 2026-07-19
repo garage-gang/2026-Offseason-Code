@@ -181,7 +181,7 @@ public class PrimeShootCommand extends Command {
   }
 
   private double fudgeFactor() {
-    return drive.getPose().getY() > Constants.FieldConstants.FIELD_WIDTH / 2 ? -6 : 6;
+    return drive.getPose().getY() > Constants.FieldConstants.FIELD_WIDTH / 2 ? -0 : 0;
   }
 
   private Translation2d adjustTurretPosition() {
