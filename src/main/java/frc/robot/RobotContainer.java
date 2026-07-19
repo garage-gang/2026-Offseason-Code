@@ -7,7 +7,12 @@
 
 package frc.robot;
 
-import static frc.robot.subsystems.vision.VisionConstants.*;
+import static frc.robot.subsystems.vision.VisionConstants.backCenterCamera;
+import static frc.robot.subsystems.vision.VisionConstants.backCenterToRobot;
+import static frc.robot.subsystems.vision.VisionConstants.backElectronicsCamera;
+import static frc.robot.subsystems.vision.VisionConstants.backElectronicsCameraToRobot;
+import static frc.robot.subsystems.vision.VisionConstants.backTurretCamera;
+import static frc.robot.subsystems.vision.VisionConstants.backTurretCameraToRobot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -15,7 +20,6 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.FileVersionException;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -184,19 +188,32 @@ public class RobotContainer {
             elevator, autoPrimeShootCommand, autoPrimeShootCommand, autoPrimeShootCommand));
 
     try {
-      PathPlannerPath centerAutoPath = PathPlannerPath.fromPathFile("simple_path");
+      // List paths for auto selection
+      // Basic center path for moving back from the hub and then shooting.
+      PathPlannerPath centerShoot = PathPlannerPath.fromPathFile("Center_Shoot");
+      // Left Side collect fuel from middle and then return to shoot
+      // This same path is flipped to create the Right Trench Auto Path.
+      PathPlannerPath rightTrenchBumperShootAutoPath =
+          PathPlannerPath.fromPathFile("Left_Side_Collect_Shoot");
+      PathPlannerPath leftTrenchBumpShootAutoPath =
+          PathPlannerPath.fromPathFile("Left_Side_Collect_Shoot");
+      // Center Depot Shoot for collecting from the depot and then shooting fuel
+      PathPlannerPath centerDepotShoot = PathPlannerPath.fromPathFile("Center_Depot_Shoot");
+
+      // ------------------------ Center Hub Shoot Auto
+      // --------------------------------------------------------------------
       autoChooser.addOption(
-          "Simple-Path",
+          "Center Hub Shoot",
           Commands.runOnce(
                   () ->
                       drive.setPose(
                           DriverStation.getAlliance().get().equals(Alliance.Blue)
-                              ? centerAutoPath.getStartingHolonomicPose().get()
-                              : centerAutoPath.flipPath().getStartingHolonomicPose().get()))
+                              ? centerShoot.getStartingHolonomicPose().get()
+                              : centerShoot.flipPath().getStartingHolonomicPose().get()))
               .andThen(
                   Commands.runOnce(() -> intake.extendExtender())
                       .alongWith(
-                          AutoBuilder.followPath(centerAutoPath)
+                          AutoBuilder.followPath(centerShoot)
                               .andThen(
                                   primeShootCommandFourth.alongWith(
                                       new ShootCommand(
@@ -204,6 +221,155 @@ public class RobotContainer {
                                           primeShootCommandFourth,
                                           primeShootCommandFourth,
                                           primeShootCommandFourth))))));
+      // ------------------------------- Center Collect from Depot Shoot Auto
+      // -----------------------------------------------------------
+      autoChooser.addOption(
+          "Center Depot Shoot",
+          Commands.runOnce(
+                  () -> {
+                    var startPose =
+                        // drive.setPose(
+                        DriverStation.getAlliance().get().equals(Alliance.Blue)
+                            ? centerDepotShoot.getPathPoses().get(0)
+                            : centerDepotShoot.flipPath().getPathPoses().get(0);
+                    if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
+                      startPose =
+                          new Pose2d(
+                              startPose.getTranslation(),
+                              startPose.getRotation().rotateBy(Rotation2d.kPi));
+                    }
+                    drive.setPose(startPose);
+                  })
+              .andThen(
+                  Commands.runOnce(() -> intake.extendExtender())
+                      .alongWith(Commands.run(() -> intake.intakeFuel()))
+                      .alongWith(
+                          AutoBuilder.followPath(centerDepotShoot)
+                              .andThen(
+                                  Commands.waitSeconds(6.0)
+                                      .deadlineFor(
+                                          primeShootCommandSix
+                                              .alongWith(
+                                                  new ShootCommand(
+                                                      elevator,
+                                                      primeShootCommandSix,
+                                                      primeShootCommandSix,
+                                                      primeShootCommandSix))
+                                              .alongWith(
+                                                  Commands.repeatingSequence(
+                                                          Commands.runOnce(
+                                                              () ->
+                                                                  intake.setExtenderPos(
+                                                                      Rotation2d.fromDegrees(30))),
+                                                          Commands.waitSeconds(1),
+                                                          Commands.runOnce(
+                                                              () ->
+                                                                  intake.setExtenderPos(
+                                                                      Rotation2d.fromDegrees(75))),
+                                                          Commands.waitSeconds(1))
+                                                      .alongWith(
+                                                          Commands.run(
+                                                              () ->
+                                                                  intake.setRollerVoltage(
+                                                                      -12)))))))));
+      // ------------------------ Left Trench Collect Bump Shoot
+      // --------------------------------------------------
+      autoChooser.addOption(
+          "Left Trench Collect Bump Shoot",
+          Commands.runOnce(
+                  () -> {
+                    var startPose =
+                        // drive.setPose(
+                        DriverStation.getAlliance().get().equals(Alliance.Blue)
+                            ? leftTrenchBumpShootAutoPath.getPathPoses().get(0)
+                            : leftTrenchBumpShootAutoPath.flipPath().getPathPoses().get(0);
+                    if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
+                      startPose =
+                          new Pose2d(
+                              startPose.getTranslation(),
+                              startPose.getRotation().rotateBy(Rotation2d.kPi));
+                    }
+                    drive.setPose(startPose);
+                  })
+              .andThen(
+                  Commands.runOnce(() -> intake.extendExtender())
+                      .alongWith(Commands.run(() -> intake.intakeFuel()))
+                      .alongWith(
+                          AutoBuilder.followPath(leftTrenchBumpShootAutoPath)
+                              .andThen(
+                                  primeShootCommand
+                                      .alongWith(
+                                          new ShootCommand(
+                                              elevator,
+                                              primeShootCommand,
+                                              primeShootCommand,
+                                              primeShootCommand))
+                                      .alongWith(
+                                          Commands.repeatingSequence(
+                                                  Commands.runOnce(
+                                                      () ->
+                                                          intake.setExtenderPos(
+                                                              Rotation2d.fromDegrees(30))),
+                                                  Commands.waitSeconds(1),
+                                                  Commands.runOnce(
+                                                      () ->
+                                                          intake.setExtenderPos(
+                                                              Rotation2d.fromDegrees(75))),
+                                                  Commands.waitSeconds(1))
+                                              .alongWith(
+                                                  Commands.run(
+                                                      () -> intake.setRollerVoltage(-12))))))));
+
+      // -------------------------------------- Right Side Trench Collect Bump Shoot
+      // --------------------------------------------------
+      autoChooser.addOption(
+          "Right Trench Bump Shoot",
+          Commands.runOnce(
+                  () -> {
+                    var startPose =
+                        DriverStation.getAlliance().get().equals(Alliance.Blue)
+                            ? rightTrenchBumperShootAutoPath.mirrorPath().getPathPoses().get(0)
+                            : rightTrenchBumperShootAutoPath
+                                .mirrorPath()
+                                .flipPath()
+                                .getPathPoses()
+                                .get(0);
+                    if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
+                      startPose =
+                          new Pose2d(
+                              startPose.getTranslation(),
+                              startPose.getRotation().rotateBy(Rotation2d.kPi));
+                    }
+                    drive.setPose(startPose);
+                  })
+              .andThen(
+                  Commands.runOnce(() -> intake.extendExtender())
+                      .alongWith(Commands.run(() -> intake.intakeFuel()))
+                      .alongWith(
+                          AutoBuilder.followPath(rightTrenchBumperShootAutoPath.mirrorPath())
+                              .andThen(
+                                  primeShootCommandEight
+                                      .alongWith(
+                                          new ShootCommand(
+                                              elevator,
+                                              primeShootCommandEight,
+                                              primeShootCommandEight,
+                                              primeShootCommandEight))
+                                      .alongWith(
+                                          Commands.repeatingSequence(
+                                                  Commands.runOnce(
+                                                      () ->
+                                                          intake.setExtenderPos(
+                                                              Rotation2d.fromDegrees(30))),
+                                                  Commands.waitSeconds(1),
+                                                  Commands.runOnce(
+                                                      () ->
+                                                          intake.setExtenderPos(
+                                                              Rotation2d.fromDegrees(75))),
+                                                  Commands.waitSeconds(1))
+                                              .alongWith(
+                                                  Commands.run(
+                                                      () -> intake.setRollerVoltage(-12))))))));
 
     } catch (FileVersionException e) {
       // TODO Auto-generated catch block
