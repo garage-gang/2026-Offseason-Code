@@ -246,7 +246,7 @@ public class RobotContainer {
                       .alongWith(
                           AutoBuilder.followPath(centerDepotShoot)
                               .andThen(
-                                  Commands.waitSeconds(6.0)
+                                  Commands.waitSeconds(1.0)
                                       .deadlineFor(
                                           primeShootCommandSix
                                               .alongWith(
