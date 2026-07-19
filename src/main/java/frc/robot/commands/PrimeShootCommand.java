@@ -156,7 +156,7 @@ public class PrimeShootCommand extends Command {
                 intake.getExtenderPos().getDegrees(),
                 checkExtenderPosition));
 
-    isPrimed = elevationInPosition && turretInPosition && wheelAtVelocity && checkExtenderPosition;
+    isPrimed = true;
 
     String PrimeShootString = "PrimeShootCommand";
 
