@@ -15,7 +15,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class DriveConstants {
-  public static final double MAX_SPEED_METERS_PER_SEC = 4.0;
+  public static final double MAX_SPEED_METERS_PER_SEC = 4.8;
   public static final double ODOMETRY_FREQUENCY = 100.0; // Hz
   public static final double TRACK_WIDTH = Units.inchesToMeters(22.0);
   public static final double WHEEL_BASE = Units.inchesToMeters(22.0);
@@ -51,7 +51,7 @@ public class DriveConstants {
   public static final double DRIVE_MOTOR_REDUCTION = (45.0 * 22) / (14 * 15);
   // MAXSwerve with 14 pinion teeth
   // and 22 spur teeth
-  public static final DCMotor DRIVE_GEARBOX = DCMotor.getNeoVortex(1);
+  public static final DCMotor DRIVE_GEARBOX = DCMotor.getNEO(1);
 
   // Drive encoder configuration
   public static final double DRIVE_ENCODER_POSITION_FACTOR =
