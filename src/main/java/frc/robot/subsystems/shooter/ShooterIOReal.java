@@ -31,16 +31,16 @@ public class ShooterIOReal implements ShooterIO {
 
   private final TalonFX wheelMotor = new TalonFX(Constants.CanIDs.SHOOTER_WHEEL_CAN_ID);
   private final TalonFX hoodMotor = new TalonFX(Constants.CanIDs.SHOOTER_HOOD_CAN_ID);
-  private final TalonFX rotationMotor = new TalonFX(Constants.CanIDs.SHOOTER_ROTATION_CAN_ID);
+  private final TalonFX turretMotor = new TalonFX(Constants.CanIDs.SHOOTER_ROTATION_CAN_ID);
 
   private final StatusSignal<Current> wheelCurrent;
   private final StatusSignal<Temperature> wheelDeviceTemp;
   private final StatusSignal<Voltage> wheelAppliedVoltage;
   private final StatusSignal<AngularVelocity> wheelVelocity;
-  private final StatusSignal<Current> rotationCurrent;
-  private final StatusSignal<Temperature> rotationDeviceTemp;
-  private final StatusSignal<Voltage> rotationAppliedVoltage;
-  private final StatusSignal<Angle> rotationAngle;
+  private final StatusSignal<Current> turretCurrent;
+  private final StatusSignal<Temperature> turretDeviceTemp;
+  private final StatusSignal<Voltage> turretAppliedVoltage;
+  private final StatusSignal<Angle> turretAngle;
   private final StatusSignal<Temperature> hoodDeviceTemp;
   private final StatusSignal<Voltage> hoodAppliedVoltage;
   private final StatusSignal<Angle> hoodAngle;
@@ -91,7 +91,7 @@ public class ShooterIOReal implements ShooterIO {
 
     TalonFXConfiguration hoodConfig = new TalonFXConfiguration();
 
-    TalonFXConfiguration rotationConfig = new TalonFXConfiguration();
+    TalonFXConfiguration turretConfig = new TalonFXConfiguration();
 
     hoodConfig.CurrentLimits.SupplyCurrentLimit = HoodConstants.SUPPLY_CURRENT_LIMIT;
     hoodConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -107,7 +107,7 @@ public class ShooterIOReal implements ShooterIO {
     hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
         HoodConstants.MAX_HOOD_ANGLE.getRotations();
     hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-        HoodConstants.MIN_HOOD_ANGLE.minus(Rotation2d.fromDegrees(2.0)).getRotations();
+        HoodConstants.MIN_HOOD_ANGLE.getRotations();
 
     hoodConfig.Feedback.SensorToMechanismRatio = HoodConstants.GEAR_RATIO;
     hoodConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
@@ -116,28 +116,28 @@ public class ShooterIOReal implements ShooterIO {
 
     hoodMotor.getConfigurator().apply(hoodConfig);
 
-    rotationConfig.CurrentLimits.SupplyCurrentLimit = RotationConstants.SUPPLY_CURRENT_LIMIT;
-    rotationConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    rotationConfig.CurrentLimits.StatorCurrentLimit = RotationConstants.STATOR_CURRENT_LIMIT;
-    rotationConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    turretConfig.CurrentLimits.SupplyCurrentLimit = RotationConstants.SUPPLY_CURRENT_LIMIT;
+    turretConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    turretConfig.CurrentLimits.StatorCurrentLimit = RotationConstants.STATOR_CURRENT_LIMIT;
+    turretConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-    rotationConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    rotationConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    turretConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    turretConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-    rotationConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    rotationConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    turretConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    turretConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-    rotationConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+    turretConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
         RotationConstants.MAX_ROTATION_ANGLE.getRotations();
-    rotationConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+    turretConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
         RotationConstants.MIN_ROTATION_ANGLE.getRotations();
 
-    rotationConfig.Feedback.SensorToMechanismRatio = RotationConstants.GEAR_RATIO;
-    rotationConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+    turretConfig.Feedback.SensorToMechanismRatio = RotationConstants.GEAR_RATIO;
+    turretConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
-    rotationConfig.Voltage.SupplyVoltageTimeConstant = HoodConstants.SUPPLY_VOLTAGE_TIME;
+    turretConfig.Voltage.SupplyVoltageTimeConstant = HoodConstants.SUPPLY_VOLTAGE_TIME;
 
-    rotationMotor.getConfigurator().apply(rotationConfig);
+    turretMotor.getConfigurator().apply(turretConfig);
 
     // Status signals
 
@@ -146,10 +146,10 @@ public class ShooterIOReal implements ShooterIO {
     hoodCurrent = hoodMotor.getStatorCurrent();
     hoodDeviceTemp = hoodMotor.getDeviceTemp();
 
-    rotationAppliedVoltage = rotationMotor.getMotorVoltage();
-    rotationAngle = rotationMotor.getPosition();
-    rotationCurrent = rotationMotor.getStatorCurrent();
-    rotationDeviceTemp = rotationMotor.getDeviceTemp();
+    turretAppliedVoltage = turretMotor.getMotorVoltage();
+    turretAngle = turretMotor.getPosition();
+    turretCurrent = turretMotor.getStatorCurrent();
+    turretDeviceTemp = turretMotor.getDeviceTemp();
 
     // Update status signals
 
@@ -158,13 +158,13 @@ public class ShooterIOReal implements ShooterIO {
     BaseStatusSignal.setUpdateFrequencyForAll(1, hoodDeviceTemp);
     BaseStatusSignal.setUpdateFrequencyForAll(50, wheelAppliedVoltage, wheelCurrent, wheelVelocity);
     BaseStatusSignal.setUpdateFrequencyForAll(1, wheelDeviceTemp);
-    BaseStatusSignal.setUpdateFrequencyForAll(100, rotationAppliedVoltage, rotationAngle);
-    BaseStatusSignal.setUpdateFrequencyForAll(50, rotationCurrent);
-    BaseStatusSignal.setUpdateFrequencyForAll(1, rotationDeviceTemp);
+    BaseStatusSignal.setUpdateFrequencyForAll(100, turretAppliedVoltage, turretAngle);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, turretCurrent);
+    BaseStatusSignal.setUpdateFrequencyForAll(1, turretDeviceTemp);
 
     hoodMotor.optimizeBusUtilization();
     wheelMotor.optimizeBusUtilization();
-    rotationMotor.optimizeBusUtilization();
+    turretMotor.optimizeBusUtilization();
   }
 
   @Override
@@ -178,22 +178,22 @@ public class ShooterIOReal implements ShooterIO {
         hoodCurrent,
         hoodAppliedVoltage,
         hoodDeviceTemp,
-        rotationAngle,
-        rotationCurrent,
-        rotationAppliedVoltage,
-        rotationDeviceTemp);
+        turretAngle,
+        turretCurrent,
+        turretAppliedVoltage,
+        turretDeviceTemp);
 
     inputs.wheelCurrentAmps = wheelCurrent.getValue().in(Units.Amps);
     inputs.wheelTempCelsius = wheelDeviceTemp.getValue().in(Units.Celsius);
     inputs.wheelAppliedOutput = wheelAppliedVoltage.getValue().in(Units.Volts);
     inputs.wheelsVelocityRPM = wheelVelocity.getValue().in(Units.RPM);
 
-    inputs.rotationPosition = Rotation2d.fromDegrees(rotationAngle.getValue().in(Units.Degrees));
-    inputs.rotationCurrentAmps = rotationCurrent.getValue().in(Units.Amps);
-    inputs.rotationAppliedOutput = rotationAppliedVoltage.getValue().in(Units.Volts);
-    inputs.rotationTempCelsius = rotationDeviceTemp.getValue().in(Units.Celsius);
+    inputs.rotationPosition = Rotation2d.fromDegrees(turretAngle.getValue().in(Units.Degrees));
+    inputs.rotationCurrentAmps = turretCurrent.getValue().in(Units.Amps);
+    inputs.rotationAppliedOutput = turretAppliedVoltage.getValue().in(Units.Volts);
+    inputs.rotationTempCelsius = turretDeviceTemp.getValue().in(Units.Celsius);
 
-    inputs.hoodPosition = Rotation2d.fromDegrees(hoodAngle.getValue().in(Units.Degrees));
+    inputs.hoodPosition = Rotation2d.fromRotations(hoodAngle.getValue().in(Units.Rotations));
     inputs.hoodCurrentAmps = hoodCurrent.getValue().in(Units.Amps);
     inputs.hoodAppliedOutput = hoodAppliedVoltage.getValue().in(Units.Volts);
     inputs.hoodTempCelsius = hoodDeviceTemp.getValue().in(Units.Celsius);
@@ -211,7 +211,7 @@ public class ShooterIOReal implements ShooterIO {
 
   @Override
   public void zeroMotors() {
-    rotationMotor.setPosition(0);
+    turretMotor.setPosition(0.5);
     hoodMotor.setPosition(0);
   }
 
@@ -236,17 +236,17 @@ public class ShooterIOReal implements ShooterIO {
   }
 
   @Override
-  public void setHoodPos(Rotation2d pos) {
-    hoodClosedLoopControl.withPosition(pos.getRotations());
+  public void setHoodElevation(Rotation2d angle) {
+    hoodClosedLoopControl.withPosition(angle.getRotations());
     hoodMotor.setControl(hoodClosedLoopControl);
   }
 
   @Override
-  public void setRotationPos(Rotation2d pos) {
-    double posRotations = pos.getRotations();
+  public void setTurretRotation(Rotation2d angle) {
+    double posRotations = angle.getRotations();
     if (posRotations < 0) posRotations += 1;
     rotationClosedLoopControl.withPosition(posRotations);
-    rotationMotor.setControl(rotationClosedLoopControl);
+    turretMotor.setControl(rotationClosedLoopControl);
   }
 
   @Override
@@ -267,13 +267,13 @@ public class ShooterIOReal implements ShooterIO {
   public void configRotation(double kP, double kD, MotionMagicConfigs mmConfigs) {
     var slot0Configs = new Slot0Configs();
 
-    rotationMotor.getConfigurator().refresh(slot0Configs);
+    turretMotor.getConfigurator().refresh(slot0Configs);
 
     slot0Configs.kP = kP;
     slot0Configs.kD = kD;
 
-    rotationMotor.getConfigurator().apply(slot0Configs);
-    rotationMotor.getConfigurator().apply(mmConfigs);
+    turretMotor.getConfigurator().apply(slot0Configs);
+    turretMotor.getConfigurator().apply(mmConfigs);
   }
 
   @Override
@@ -283,7 +283,7 @@ public class ShooterIOReal implements ShooterIO {
 
   @Override
   public void setRotationVoltage(double volts) {
-    rotationMotor.setControl(rotationOpenLoopControl.withOutput(volts));
+    turretMotor.setControl(rotationOpenLoopControl.withOutput(volts));
   }
 
   @Override
@@ -305,13 +305,13 @@ public class ShooterIOReal implements ShooterIO {
 
     var config = new MotorOutputConfigs();
 
-    var status = rotationMotor.getConfigurator().refresh(config);
+    var status = turretMotor.getConfigurator().refresh(config);
 
     if (status != StatusCode.OK) return false;
 
     config.NeutralMode = value;
 
-    rotationMotor.getConfigurator().apply(config);
+    turretMotor.getConfigurator().apply(config);
     return true;
   }
 }

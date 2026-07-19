@@ -26,7 +26,7 @@ public class Elevator extends SubsystemBase {
       eleKV.initDefault(0.15);
 
       elevatorTargetAccelerationConfig.initDefault(300.0);
-      elevatorMaxVelocityConfig.initDefault(1500.0);
+      elevatorMaxVelocityConfig.initDefault(3000.0);
     } else {
       eleKP.initDefault(0);
       eleKV.initDefault(0.12);

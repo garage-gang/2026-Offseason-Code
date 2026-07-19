@@ -127,11 +127,11 @@ public class Intake extends SubsystemBase {
   }
 
   public void releaseFuel() {
-    setRollerVel(Units.RPM.of(4000));
+    setRollerVoltage(12.0);
   }
 
   public void intakeFuel() {
-    setRollerVel(Units.RPM.of(-4000));
+    setRollerVoltage(-12.0);
   }
 
   public void stopRoller() {

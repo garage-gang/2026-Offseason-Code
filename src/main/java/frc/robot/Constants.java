@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
@@ -41,14 +42,14 @@ public final class Constants {
     public class ExtenderConstants {
 
       public static final double GEAR_RATIO = 45; // will need to be changed ALOT
-      public static final Rotation2d MAX_EXTENDER_ANGLE = Rotation2d.fromDegrees(123);
+      public static final Rotation2d MAX_EXTENDER_ANGLE = Rotation2d.fromDegrees(125);
       public static final Rotation2d MIN_EXTENDER_ANGLE = Rotation2d.fromDegrees(0);
       public static final double SUPPLY_CURRENT_LIMIT = 40;
       public static final double STATOR_CURRENT_LIMIT = 40;
       public static final double SUPPLY_VOLTAGE_TIME = 0.02;
       public static final double EXTENDER_MOI = 0.1;
       public static final Distance EXTENDER_LENGTH = Units.Inches.of(12.5);
-      public static final Rotation2d MIN_REQ_EXTENDER_ANGLE = Rotation2d.fromDegrees(90);
+      public static final Rotation2d MIN_REQ_EXTENDER_ANGLE = Rotation2d.fromDegrees(8);
     }
 
     public class RollerConstants {
@@ -62,7 +63,8 @@ public final class Constants {
   }
 
   public class FieldConstants {
-    // set the hub position translation2d, used that to translate the value and get
+    // set the hub position and alliance position translation2d,
+    // used that to translate the value and get
     // our hub position
     // depending on aliance color.
 
@@ -70,12 +72,34 @@ public final class Constants {
         new Translation2d(
             VisionConstants.aprilTagLayout.getTagPose(18).get().getX(),
             VisionConstants.aprilTagLayout.getTagPose(26).get().getY());
+
     public static final Translation2d RED_HUB_POSITION =
         new Translation2d(
-            VisionConstants.aprilTagLayout.getTagPose(2).get().getX(),
-            VisionConstants.aprilTagLayout.getTagPose(10).get().getY());
+            VisionConstants.aprilTagLayout.getTagPose(4).get().getX(),
+            VisionConstants.aprilTagLayout.getTagPose(4).get().getY());
+
+    public static final Translation2d BLUE_ALLIANCE_BOTTOM_POSITION =
+        new Translation2d(
+            VisionConstants.aprilTagLayout.getTagPose(22).get().getX() - 0.5,
+            VisionConstants.aprilTagLayout.getTagPose(22).get().getY() + 0.5);
+
+    public static final Translation2d BLUE_ALLIANCE_TOP_POSITION =
+        new Translation2d(
+            VisionConstants.aprilTagLayout.getTagPose(17).get().getX() - 0.5,
+            VisionConstants.aprilTagLayout.getTagPose(17).get().getY() - 0.5);
+
+    public static final Translation2d RED_ALLIANCE_BOTTOM_POSITION =
+        new Translation2d(
+            VisionConstants.aprilTagLayout.getTagPose(1).get().getX() + 0.5,
+            VisionConstants.aprilTagLayout.getTagPose(1).get().getY() + 0.5);
+
+    public static final Translation2d RED_ALLIANCE_TOP_POSITION =
+        new Translation2d(
+            VisionConstants.aprilTagLayout.getTagPose(6).get().getX() + 0.5,
+            VisionConstants.aprilTagLayout.getTagPose(6).get().getY() - 0.5);
 
     public static final double FIELD_LENGTH = 16.54048;
+    public static final double FIELD_WIDTH = 8.06958;
 
     public static Translation2d ourHubPosition() {
       Translation2d hubP = new Translation2d();
@@ -85,6 +109,21 @@ public final class Constants {
         hubP = RED_HUB_POSITION;
       }
       return hubP;
+    }
+
+    public static Translation2d targetedTrenchDirection(Pose2d robotPose) {
+      Translation2d trenchTurretDecision = new Translation2d();
+      if (DriverStation.getAlliance().get().equals(Alliance.Blue)) {
+        if (robotPose.getY() > FIELD_WIDTH / 2.0) {
+          trenchTurretDecision = BLUE_ALLIANCE_BOTTOM_POSITION;
+        } else trenchTurretDecision = BLUE_ALLIANCE_TOP_POSITION;
+      } else {
+
+        if (robotPose.getY() > FIELD_WIDTH / 2.0) {
+          trenchTurretDecision = RED_ALLIANCE_BOTTOM_POSITION;
+        } else trenchTurretDecision = RED_ALLIANCE_TOP_POSITION;
+      }
+      return trenchTurretDecision;
     }
   }
 
@@ -119,10 +158,10 @@ public final class Constants {
 
     public final class HoodConstants {
       public static final Rotation2d MIN_HOOD_ANGLE = Rotation2d.fromDegrees(0);
-      public static final Rotation2d MAX_HOOD_ANGLE = Rotation2d.fromDegrees(90);
+      public static final Rotation2d MAX_HOOD_ANGLE = Rotation2d.fromDegrees(40);
       public static final double HOOD_MOI = 0.0001;
-      public static final double STATOR_CURRENT_LIMIT = 20;
-      public static final double SUPPLY_CURRENT_LIMIT = 20;
+      public static final double STATOR_CURRENT_LIMIT = 35;
+      public static final double SUPPLY_CURRENT_LIMIT = 35;
       public static final double MAX_VELOCITY = 10;
       public static final double TARGET_ACCELERATION = 10;
       public static final double GEAR_RATIO = 11.3333333333;
@@ -142,6 +181,7 @@ public final class Constants {
       public static final double TARGET_ACCELERATION = 10;
       public static final double GEAR_RATIO = 13.333333;
       public static final double SUPPLY_VOLTAGE_TIME = 0.02;
+      public static final double TIME_ADJUST_TURRET = 2;
     }
 
     public final class WheelConstants {
@@ -153,22 +193,57 @@ public final class Constants {
       public static final double SUPPLY_VOLTAGE_TIME = 0.02;
     }
 
-    public static final InterpolatingDoubleTreeMap FLYWHEEL_DISTANCE_SPEED_TABLE =
+    public static final InterpolatingDoubleTreeMap FLYWHEEL_HUB_DISTANCE_SPEED_TABLE =
         new InterpolatingDoubleTreeMap();
 
     static {
-      FLYWHEEL_DISTANCE_SPEED_TABLE.put(0.0, 0.0);
-      FLYWHEEL_DISTANCE_SPEED_TABLE.put(1.0, 10.0);
-      FLYWHEEL_DISTANCE_SPEED_TABLE.put(2.0, 30.0);
+      // FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(2.34, 3500.0);
+      // FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(3.218, 4200.0);
+      // FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(3.35, 4400.0);
+      // FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(4.09, 4600.0);
+      FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(3.89, 4200.0);
+      FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(3.427, 4200.0);
+      FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(5.503, 5000.0);
+      FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(1.994, 3250.0);
+      FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(3.217, 3700.0);
+      FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(4.788, 5000.0);
+      FLYWHEEL_HUB_DISTANCE_SPEED_TABLE.put(5.686, 5700.0);
     }
 
-    public static final InterpolatingDoubleTreeMap HOOD_DISTANCE_ANGLE_TABLE =
+    public static final InterpolatingDoubleTreeMap HOOD_HUB_DISTANCE_ANGLE_TABLE =
         new InterpolatingDoubleTreeMap();
 
     static {
-      HOOD_DISTANCE_ANGLE_TABLE.put(0.0, 0.0);
-      HOOD_DISTANCE_ANGLE_TABLE.put(1.0, 10.0);
-      HOOD_DISTANCE_ANGLE_TABLE.put(2.0, 30.0);
+      // HOOD_HUB_DISTANCE_ANGLE_TABLE.put(2.34, 5.0);
+      // HOOD_HUB_DISTANCE_ANGLE_TABLE.put(3.218, 20.0);
+      // HOOD_HUB_DISTANCE_ANGLE_TABLE.put(3.35, 5.0);
+      // HOOD_HUB_DISTANCE_ANGLE_TABLE.put(4.09, 30.0);
+      HOOD_HUB_DISTANCE_ANGLE_TABLE.put(3.89, 11.0);
+      HOOD_HUB_DISTANCE_ANGLE_TABLE.put(3.427, 11.0);
+      HOOD_HUB_DISTANCE_ANGLE_TABLE.put(5.503, 16.0);
+      HOOD_HUB_DISTANCE_ANGLE_TABLE.put(2.548, 5.0);
+      HOOD_HUB_DISTANCE_ANGLE_TABLE.put(1.994, 5.0);
+      HOOD_HUB_DISTANCE_ANGLE_TABLE.put(3.217, 15.0);
+      HOOD_HUB_DISTANCE_ANGLE_TABLE.put(4.788, 11.0);
+      HOOD_HUB_DISTANCE_ANGLE_TABLE.put(5.686, 13.0);
+    }
+
+    public static final InterpolatingDoubleTreeMap FLYWHEEL_ALLIANCE_DISTANCE_SPEED_TABLE =
+        new InterpolatingDoubleTreeMap();
+
+    static {
+      FLYWHEEL_ALLIANCE_DISTANCE_SPEED_TABLE.put(0.0, 0.0);
+      FLYWHEEL_ALLIANCE_DISTANCE_SPEED_TABLE.put(1.0, 10.0);
+      FLYWHEEL_ALLIANCE_DISTANCE_SPEED_TABLE.put(2.0, 30.0);
+    }
+
+    public static final InterpolatingDoubleTreeMap HOOD_ALLIANCE_DISTANCE_ANGLE_TABLE =
+        new InterpolatingDoubleTreeMap();
+
+    static {
+      HOOD_ALLIANCE_DISTANCE_ANGLE_TABLE.put(0.0, 0.0);
+      HOOD_ALLIANCE_DISTANCE_ANGLE_TABLE.put(1.0, 10.0);
+      HOOD_ALLIANCE_DISTANCE_ANGLE_TABLE.put(2.0, 30.0);
     }
   }
 

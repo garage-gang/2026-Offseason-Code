@@ -42,14 +42,14 @@ public class Shooter extends SubsystemBase {
       wKV.initDefault(0.108);
       wheelTargetAccelerationConfig.initDefault(300.0);
 
-      hKP.initDefault(40);
+      hKP.initDefault(200);
       hKI.initDefault(0);
       hKD.initDefault(0);
 
       hoodMaxVelocityConfig.initDefault(10);
       hoodTargetAccelerationConfig.initDefault(10);
 
-      rKP.initDefault(10);
+      rKP.initDefault(20);
       rKD.initDefault(0.007);
 
       rotationMaxVelocityConfig.initDefault(10);
@@ -135,16 +135,28 @@ public class Shooter extends SubsystemBase {
     shooterIO.setWheelVel(vel);
   }
 
-  public void setHoodPos(Rotation2d pos) {
-    shooterIO.setHoodPos(pos);
+  public void setHoodElevation(Rotation2d pos) {
+    shooterIO.setHoodElevation(pos);
   }
 
   public void setRotationPos(Rotation2d pos) {
-    shooterIO.setRotationPos(pos);
+    shooterIO.setTurretRotation(pos);
   }
 
   public void zeroMotors() {
     shooterIO.zeroMotors();
+  }
+
+  public Rotation2d getHoodElevation() {
+    return inputs.hoodPosition;
+  }
+
+  public Rotation2d getTurretRotation() {
+    return inputs.rotationPosition;
+  }
+
+  public AngularVelocity getWheelVel() {
+    return Units.RPM.of(inputs.wheelsVelocityRPM);
   }
 
   public Rotation2d getHoodPos() {
@@ -153,9 +165,5 @@ public class Shooter extends SubsystemBase {
 
   public Rotation2d getRotationPos() {
     return inputs.rotationPosition;
-  }
-
-  public AngularVelocity getWheelVel() {
-    return Units.RPM.of(inputs.wheelsVelocityRPM);
   }
 }

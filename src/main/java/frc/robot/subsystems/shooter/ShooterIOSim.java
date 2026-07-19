@@ -111,7 +111,7 @@ public class ShooterIOSim implements ShooterIO {
   }
 
   @Override
-  public void setHoodPos(Rotation2d angle) {
+  public void setHoodElevation(Rotation2d angle) {
     hoodSim.setControl(hoodClosedLoopControl.withPosition(angle.getRotations()));
   }
 
@@ -136,7 +136,7 @@ public class ShooterIOSim implements ShooterIO {
   }
 
   @Override
-  public void setRotationPos(Rotation2d angle) {
+  public void setTurretRotation(Rotation2d angle) {
     rotationSim.setControl(rotationClosedLoopControl.withPosition(angle.getRotations()));
   }
 

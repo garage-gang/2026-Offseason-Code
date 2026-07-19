@@ -15,61 +15,61 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class DriveConstants {
-  public static final double maxSpeedMetersPerSec = 4.8;
-  public static final double odometryFrequency = 100.0; // Hz
-  public static final double trackWidth = Units.inchesToMeters(22.0);
-  public static final double wheelBase = Units.inchesToMeters(22.0);
-  public static final double driveBaseRadius = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
-  public static final Translation2d[] moduleTranslations =
+  public static final double MAX_SPEED_METERS_PER_SEC = 4;
+  public static final double ODOMETRY_FREQUENCY = 100.0; // Hz
+  public static final double TRACK_WIDTH = Units.inchesToMeters(22.0);
+  public static final double WHEEL_BASE = Units.inchesToMeters(22.0);
+  public static final double DRIVE_BASE_RADIUS = Math.hypot(TRACK_WIDTH / 2.0, WHEEL_BASE / 2.0);
+  public static final Translation2d[] MODULE_TRANSLATIONS =
       new Translation2d[] {
-        new Translation2d(trackWidth / 2.0, wheelBase / 2.0),
-        new Translation2d(trackWidth / 2.0, -wheelBase / 2.0),
-        new Translation2d(-trackWidth / 2.0, wheelBase / 2.0),
-        new Translation2d(-trackWidth / 2.0, -wheelBase / 2.0)
+        new Translation2d(TRACK_WIDTH / 2.0, WHEEL_BASE / 2.0),
+        new Translation2d(TRACK_WIDTH / 2.0, -WHEEL_BASE / 2.0),
+        new Translation2d(-TRACK_WIDTH / 2.0, WHEEL_BASE / 2.0),
+        new Translation2d(-TRACK_WIDTH / 2.0, -WHEEL_BASE / 2.0)
       };
 
-  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(4.71238);
-  public static final Rotation2d frontRightZeroRotation = new Rotation2d(0.0);
-  public static final Rotation2d backLeftZeroRotation = new Rotation2d(3.14159);
-  public static final Rotation2d backRightZeroRotation = new Rotation2d(1.57079);
+  public static final Rotation2d FRONT_LEFT_ZERO_ROTATION = new Rotation2d(0 + 3.14 + 1.57);
+  public static final Rotation2d FRONT_RIGHT_ZERO_ROTATION = new Rotation2d(0);
+  public static final Rotation2d BACK_LEFT_ZERO_ROTATION = new Rotation2d(3.14159);
+  public static final Rotation2d BACK_RIGHT_ZERO_ROTATION = new Rotation2d(1.57079);
 
-  public static final int pigeonCanId = 9;
+  public static final int PIGEON_CAN_ID = 9;
 
-  public static final int frontLeftDriveCanId = 2;
-  public static final int backLeftDriveCanId = 4;
-  public static final int frontRightDriveCanId = 8;
-  public static final int backRightDriveCanId = 6;
+  public static final int FRONT_LEFT_DRIVE_CAN_ID = 8;
+  public static final int BACK_LEFT_DRIVE_CAN_ID = 4;
+  public static final int FRONT_RIGHT_DRIVE_CAN_ID = 2;
+  public static final int BACK_RIGHT_DRIVE_CAN_ID = 6;
 
-  public static final int frontLeftTurnCanId = 1;
-  public static final int backLeftTurnCanId = 3;
-  public static final int frontRightTurnCanId = 7;
-  public static final int backRightTurnCanId = 5;
+  public static final int FRONT_LEFT_TURN_CAN_ID = 7;
+  public static final int BACK_LEFT_TURN_CAN_ID = 3;
+  public static final int FRONT_RIGHT_TURN_CAN_ID = 1;
+  public static final int BACK_RIGHT_TURN_CAN_ID = 5;
 
   // Drive motor configuration
-  public static final int driveMotorCurrentLimit = 50;
-  public static final double wheelRadiusMeters = Units.inchesToMeters(1.5);
-  public static final double driveMotorReduction = (45.0 * 22) / (14 * 15);
+  public static final int DRIVE_MOTOR_CURRENT_LIMIT = 40;
+  public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(1.5);
+  public static final double DRIVE_MOTOR_REDUCTION = (45.0 * 22) / (14 * 15);
   // MAXSwerve with 14 pinion teeth
   // and 22 spur teeth
-  public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1);
+  public static final DCMotor DRIVE_GEARBOX = DCMotor.getNeoVortex(1);
 
   // Drive encoder configuration
-  public static final double driveEncoderPositionFactor =
-      2 * Math.PI / driveMotorReduction; // Rotor Rotations ->
+  public static final double DRIVE_ENCODER_POSITION_FACTOR =
+      2 * Math.PI / DRIVE_MOTOR_REDUCTION; // Rotor Rotations ->
   // Wheel Radians
-  public static final double driveEncoderVelocityFactor =
-      (2 * Math.PI) / 60.0 / driveMotorReduction; // Rotor RPM ->
+  public static final double DRIVE_ENCODER_VELOCITY_FACTOR =
+      (2 * Math.PI) / 60.0 / DRIVE_MOTOR_REDUCTION; // Rotor RPM ->
   // Wheel Rad/Sec
 
   // Drive PID configuration
-  public static final double driveKp = 0.0;
-  public static final double driveKd = 0.0;
-  public static final double driveKs = 0.0;
-  public static final double driveKv = 0.1;
-  public static final double driveSimP = 0.05;
-  public static final double driveSimD = 0.0;
-  public static final double driveSimKs = 0.0;
-  public static final double driveSimKv = 0.0789;
+  public static final double DRIVE_KP = 0.0;
+  public static final double DRIVE_KD = 0.0;
+  public static final double DRIVE_KS = 0.0;
+  public static final double DRIVE_KV = 0.1;
+  public static final double DRIVE_SIM_P = 0.05;
+  public static final double DRIVE_SIM_D = 0.0;
+  public static final double DRIVE_SIM_KS = 0.0;
+  public static final double DRIVE_SIM_KV = 0.0789;
 
   // Turn motor configuration
   public static final boolean turnInverted = false;
@@ -99,11 +99,11 @@ public class DriveConstants {
           robotMassKg,
           robotMOI,
           new ModuleConfig(
-              wheelRadiusMeters,
-              maxSpeedMetersPerSec,
+              WHEEL_RADIUS_METERS,
+              MAX_SPEED_METERS_PER_SEC,
               wheelCOF,
-              driveGearbox.withReduction(driveMotorReduction),
-              driveMotorCurrentLimit,
+              DRIVE_GEARBOX.withReduction(DRIVE_MOTOR_REDUCTION),
+              DRIVE_MOTOR_CURRENT_LIMIT,
               1),
-          moduleTranslations);
+          MODULE_TRANSLATIONS);
 }
