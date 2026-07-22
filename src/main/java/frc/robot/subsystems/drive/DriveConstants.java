@@ -15,7 +15,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class DriveConstants {
-  public static final double MAX_SPEED_METERS_PER_SEC = 4.8;
+  public static final double MAX_SPEED_METERS_PER_SEC = 1.0;
   public static final double ODOMETRY_FREQUENCY = 100.0; // Hz
   public static final double TRACK_WIDTH = Units.inchesToMeters(22.0);
   public static final double WHEEL_BASE = Units.inchesToMeters(22.0);
@@ -46,7 +46,7 @@ public class DriveConstants {
   public static final int BACK_RIGHT_TURN_CAN_ID = 5;
 
   // Drive motor configuration
-  public static final int DRIVE_MOTOR_CURRENT_LIMIT = 40;
+  public static final int DRIVE_MOTOR_CURRENT_LIMIT = 14;
   public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(1.5);
   public static final double DRIVE_MOTOR_REDUCTION = (45.0 * 22) / (14 * 15);
   // MAXSwerve with 14 pinion teeth
