@@ -64,11 +64,13 @@
   ],
   "java.dependency.enableDependencyCheckup": false,
   "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle",
+  "editor.formatOnSave": "always",
+  "editor.formatOnType": true,
   "[json]": {
     "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"
   },
   "[java]": {
-    "editor.defaultFormatter": "redhat.java"
+    "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"
   },
   "java.debug.settings.onBuildFailureProceed": true
 }

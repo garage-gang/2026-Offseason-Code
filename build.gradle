@@ -184,8 +184,7 @@ spotless {
             exclude "**/build/**", "**/build-*/**"
         }
         toggleOffOn()
-        googleJavaFormat()
-        removeUnusedImports()
+        eclipse("4.21.0").configFile("config/eclipse-java-formatter.properties")        removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()
     }
@@ -202,8 +201,7 @@ spotless {
     json {
         target fileTree(".") {
             include "**/*.json"
-            exclude "**/build/**", "**/build-*/**", ".wpilib/**"
-        }
+            exclude "**/build/**", "**/build-*/**", ".wpilib/**", "vendordeps/**"        }
         gson().indentWithSpaces(2)
     }
     format "misc", {
