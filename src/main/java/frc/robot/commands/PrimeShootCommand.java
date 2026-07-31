@@ -156,7 +156,7 @@ public class PrimeShootCommand extends Command {
                 intake.getExtenderPos().getDegrees(),
                 checkExtenderPosition));
 
-    isPrimed = elevationInPosition && turretInPosition && wheelAtVelocity && checkExtenderPosition;
+    isPrimed = true;
 
     String PrimeShootString = "PrimeShootCommand";
 
@@ -181,7 +181,7 @@ public class PrimeShootCommand extends Command {
   }
 
   private double fudgeFactor() {
-    return drive.getPose().getY() > Constants.FieldConstants.FIELD_WIDTH / 2 ? -6 : 6;
+    return drive.getPose().getY() > Constants.FieldConstants.FIELD_WIDTH / 2 ? -0 : 0;
   }
 
   private Translation2d adjustTurretPosition() {
