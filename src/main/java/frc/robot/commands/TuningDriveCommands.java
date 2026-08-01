@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-public class DriveCommands {
+public class TuningDriveCommands {
 	private static final double DEADBAND = 0.1;
 	private static final double ANGLE_KP = 5.0;
 	private static final double ANGLE_KD = 0.4;
@@ -40,9 +40,9 @@ public class DriveCommands {
 	private static final double FF_START_DELAY = 2.0; // Secs
 	private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
 	private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
-	private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
+	private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2\
 
-	private DriveCommands() {}
+	private TuningDriveCommands() {}
 
 	private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
 		// Apply deadband
@@ -61,27 +61,30 @@ public class DriveCommands {
 	 * Field relative drive command using two joysticks (controlling linear and
 	 * angular velocities).
 	 */
-	public static Command joystickDrive(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier,
-	        DoubleSupplier omegaSupplier) {
+	public static Command dpadDrive(Drive drive, Double xVelocity, Double yVelocity) {
 		return Commands.run(() -> {
-			// Get linear velocity
-			Translation2d linearVelocity = getLinearVelocityFromJoysticks(xSupplier.getAsDouble(),
-			        ySupplier.getAsDouble());
-
-			// Apply rotation deadband
-			double omega = MathUtil.applyDeadband(-omegaSupplier.getAsDouble(), DEADBAND);
-
-			// Square rotation value for more precise control
-			omega = Math.copySign(omega * omega, omega);
+			// Get Heading
+			Rotation2d Heading = new Rotation2d();
+			if (xVelocity != 0.0) {
+				if (xVelocity > 0.0) {
+					Heading.plus(new Rotation2d(0.0));
+				} else {
+					Heading.plus(new Rotation2d(Math.PI));
+				}
+			} else if (yVelocity != 0.0) {
+				if (yVelocity > 0.0) {
+					Heading.plus(new Rotation2d(Math.PI / 2));
+				} else {
+					Heading.plus(new Rotation2d((Math.PI * 3) / 2));
+				}
+			}
+			// Get linear velocity in x and y and set rotation by calculated heading
+			Translation2d linearVelocity = new Translation2d(xVelocity, yVelocity).rotateBy(Heading);
 
 			// Convert to field relative speeds & send command
 			ChassisSpeeds speeds = new ChassisSpeeds(linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-			        linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-			        omega * drive.getMaxAngularSpeedRadPerSec());
-			boolean isFlipped = DriverStation.getAlliance().isPresent()
-			        && DriverStation.getAlliance().get() == Alliance.Red;
-			drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds,
-			        isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation()));
+			        linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(), 0.0);
+			drive.runVelocity(ChassisSpeeds.fromRobotRelativeSpeeds(speeds, drive.getRotation()));
 		}, drive);
 	}
 
