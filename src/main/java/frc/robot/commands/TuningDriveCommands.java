@@ -40,7 +40,7 @@ public class TuningDriveCommands {
 	private static final double FF_START_DELAY = 2.0; // Secs
 	private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
 	private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
-	private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
+	private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2\
 
 	private TuningDriveCommands() {}
 
@@ -73,7 +73,7 @@ public class TuningDriveCommands {
 				}
 			} else if (yVelocity != 0.0) {
 				if (yVelocity > 0.0) {
-					Heading.plus(new Rotation2d(Math.PI  / 2));
+					Heading.plus(new Rotation2d(Math.PI / 2));
 				} else {
 					Heading.plus(new Rotation2d((Math.PI * 3) / 2));
 				}
@@ -83,7 +83,7 @@ public class TuningDriveCommands {
 
 			// Convert to field relative speeds & send command
 			ChassisSpeeds speeds = new ChassisSpeeds(linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-			        linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(), drive.getMaxAngularSpeedRadPerSec());
+			        linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(), 0.0);
 			drive.runVelocity(ChassisSpeeds.fromRobotRelativeSpeeds(speeds, drive.getRotation()));
 		}, drive);
 	}
