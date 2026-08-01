@@ -42,6 +42,7 @@ import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeIOReal;
 import frc.robot.subsystems.Intake.IntakeIOSim;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
@@ -333,7 +334,15 @@ public class RobotContainer {
 		        .runOnce(() -> drive.setPose(new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)), drive)
 		        .ignoringDisable(true));
 
-		driverController.povUp().whileTrue(TuningDriveCommands.dpadDrive(drive, 0.25, 0.0));
+		// Button Bindings for robot crawl mode
+		driverController.povUp()
+		        .whileTrue(TuningDriveCommands.dpadDrive(drive, DriveConstants.robotCrawlModifier, 0.0));
+		driverController.povDown()
+		        .whileTrue(TuningDriveCommands.dpadDrive(drive, -1 * DriveConstants.robotCrawlModifier, 0.0));
+		driverController.povLeft()
+		        .whileTrue(TuningDriveCommands.dpadDrive(drive, 0.0, DriveConstants.robotCrawlModifier));
+		driverController.povRight()
+		        .whileTrue(TuningDriveCommands.dpadDrive(drive, 0.0, -1 * DriveConstants.robotCrawlModifier));
 
 		coDriverController.b().whileTrue(Commands.run(() -> elevator.setElevatorVoltage(-8)))
 		        .onFalse(Commands.runOnce(() -> elevator.setElevatorVoltage(0)));
