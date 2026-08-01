@@ -63,8 +63,23 @@ public class TuningDriveCommands {
 	 */
 	public static Command dpadDrive(Drive drive, Double xVelocity, Double yVelocity) {
 		return Commands.run(() -> {
-			// Get linear velocity
-			Translation2d linearVelocity = new Translation2d(xVelocity, yVelocity, 0.0);
+			// Get Heading
+			Rotation2d Heading = new Rotation2d();
+			if (xVelocity != 0.0) {
+				if (xVelocity > 0.0) {
+					Heading.plus(new Rotation2d(0.0));
+				} else {
+					Heading.plus(new Rotation2d(Math.PI));
+				}
+			} else if (yVelocity != 0.0) {
+				if (yVelocity > 0.0) {
+					Heading.plus(new Rotation2d(Math.PI  / 2));
+				} else {
+					Heading.plus(new Rotation2d((Math.PI * 3) / 2));
+				}
+			}
+			// Get linear velocity in x and y and set rotation by calculated heading
+			Translation2d linearVelocity = new Translation2d(xVelocity, yVelocity).rotateBy(Heading);
 
 			// Convert to field relative speeds & send command
 			ChassisSpeeds speeds = new ChassisSpeeds(linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
