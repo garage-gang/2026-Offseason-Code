@@ -13,43 +13,40 @@ import frc.robot.util.TalonFXSim;
 
 public class ElevatorIOSim implements ElevatorIO {
 
-  private TalonFXSim elevatorMotor =
-      new TalonFXSim(
-          DCMotor.getKrakenX60Foc(1),
-          ElevatorConstants.ELEVATOR_GEARING,
-          ElevatorConstants.ELEVATOR_MOI);
+	private TalonFXSim elevatorMotor = new TalonFXSim(DCMotor.getKrakenX60Foc(1), ElevatorConstants.ELEVATOR_GEARING,
+	        ElevatorConstants.ELEVATOR_MOI);
 
-  private VoltageOut elevatorOpenLoopControl = new VoltageOut(0);
-  private VelocityVoltage elevatorClosedLoopControl = new VelocityVoltage(0);
+	private VoltageOut elevatorOpenLoopControl = new VoltageOut(0);
+	private VelocityVoltage elevatorClosedLoopControl = new VelocityVoltage(0);
 
-  public ElevatorIOSim() {}
+	public ElevatorIOSim() {}
 
-  @Override
-  public void updateInputs(ElevatorInputs inputs) {
-    elevatorMotor.update(Constants.kDefaultPeriod);
-    inputs.elevatorsAppliedOutput = elevatorMotor.getVoltage();
-    inputs.elevatorsVelocityRPM = elevatorMotor.getVelocity().in(Units.RPM);
-  }
+	@Override
+	public void updateInputs(ElevatorInputs inputs) {
+		elevatorMotor.update(Constants.kDefaultPeriod);
+		inputs.elevatorsAppliedOutput = elevatorMotor.getVoltage();
+		inputs.elevatorsVelocityRPM = elevatorMotor.getVelocity().in(Units.RPM);
+	}
 
-  @Override
-  public void setElevatorVoltage(double volts) {
-    elevatorMotor.setControl(elevatorOpenLoopControl.withOutput(volts));
-  }
+	@Override
+	public void setElevatorVoltage(double volts) {
+		elevatorMotor.setControl(elevatorOpenLoopControl.withOutput(volts));
+	}
 
-  @Override
-  public void setElevatorVel(AngularVelocity revPerMin) {
-    elevatorMotor.setControl(elevatorClosedLoopControl.withVelocity(revPerMin));
-  }
+	@Override
+	public void setElevatorVel(AngularVelocity revPerMin) {
+		elevatorMotor.setControl(elevatorClosedLoopControl.withVelocity(revPerMin));
+	}
 
-  @Override
-  public void configElevator(double kP, double kV, double maxAcceleration) {
-    TalonFXConfiguration config = new TalonFXConfiguration();
-    Slot0Configs slot0Configs = new Slot0Configs();
+	@Override
+	public void configElevator(double kP, double kV, double maxAcceleration) {
+		TalonFXConfiguration config = new TalonFXConfiguration();
+		Slot0Configs slot0Configs = new Slot0Configs();
 
-    slot0Configs.kP = kP;
-    slot0Configs.kV = kV;
+		slot0Configs.kP = kP;
+		slot0Configs.kV = kV;
 
-    config.Slot0 = slot0Configs;
-    elevatorMotor.setConfig(config);
-  }
+		config.Slot0 = slot0Configs;
+		elevatorMotor.setConfig(config);
+	}
 }
