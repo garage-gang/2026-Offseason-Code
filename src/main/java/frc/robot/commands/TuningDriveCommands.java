@@ -64,16 +64,12 @@ public class TuningDriveCommands {
 	public static Command dpadDrive(Drive drive, Double xVelocity, Double yVelocity) {
 		return Commands.run(() -> {
 			// Get linear velocity
-			Translation2d linearVelocity = getLinearVelocityFromJoysticks(xVelocity, yVelocity);
+			Translation2d linearVelocity = new Translation2d(xVelocity, yVelocity, 0.0);
 
 			// Convert to field relative speeds & send command
 			ChassisSpeeds speeds = new ChassisSpeeds(linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-			        linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-			        drive.getMaxAngularSpeedRadPerSec());
-			boolean isFlipped = DriverStation.getAlliance().isPresent()
-			        && DriverStation.getAlliance().get() == Alliance.Red;
-			drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds,
-			        isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation()));
+			        linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(), drive.getMaxAngularSpeedRadPerSec());
+			drive.runVelocity(ChassisSpeeds.fromRobotRelativeSpeeds(speeds, drive.getRotation()));
 		}, drive);
 	}
 
