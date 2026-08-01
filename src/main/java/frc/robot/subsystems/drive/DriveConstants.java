@@ -96,4 +96,8 @@ public class DriveConstants {
 	        new ModuleConfig(WHEEL_RADIUS_METERS, MAX_SPEED_METERS_PER_SEC, wheelCOF,
 	                DRIVE_GEARBOX.withReduction(DRIVE_MOTOR_REDUCTION), DRIVE_MOTOR_CURRENT_LIMIT, 1),
 	        MODULE_TRANSLATIONS);
+
+	// Robot Crawl max speeds
+	// 0.001 = Target of 14inches per 5 seconds
+	public static final double robotCrawlModifier = 0.001;
 }
