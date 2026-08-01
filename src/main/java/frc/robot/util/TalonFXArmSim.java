@@ -18,79 +18,79 @@ import frc.robot.util.TalonFXSim.ControlMode;
 
 public class TalonFXArmSim {
 
-	private final SingleJointedArmSim sim;
+  private final SingleJointedArmSim sim;
 
-	private final ProfiledPIDController feedback = new ProfiledPIDController(0, 0, 0, new Constraints(0, 0));
+  private final ProfiledPIDController feedback =
+      new ProfiledPIDController(0, 0, 0, new Constraints(0, 0));
 
-	private ControlMode control = ControlMode.VOLTAGE;
+  private ControlMode control = ControlMode.VOLTAGE;
 
-	private double targetVoltage;
-	private Angle targetPosition;
+  private double targetVoltage;
+  private Angle targetPosition;
 
-	private double output;
+  private double output;
 
-	private double kG;
+  private double kG;
 
-	public TalonFXArmSim(SingleJointedArmSim coreSim) {
-		sim = coreSim;
-	}
+  public TalonFXArmSim(SingleJointedArmSim coreSim) {
+    sim = coreSim;
+  }
 
-	public void update(double dtSeconds) {
-		sim.update(dtSeconds);
+  public void update(double dtSeconds) {
+    sim.update(dtSeconds);
 
-		if (control == ControlMode.VOLTAGE) {
-			output = targetVoltage;
-		} else {
-			output = feedback.calculate(sim.getAngleRads(), targetPosition.in(Units.Radians))
-			        + kG * Math.cos(sim.getAngleRads());
-		}
+    if (control == ControlMode.VOLTAGE) {
+      output = targetVoltage;
+    } else {
+      output =
+          feedback.calculate(sim.getAngleRads(), targetPosition.in(Units.Radians))
+              + kG * Math.cos(sim.getAngleRads());
+    }
 
-		output = MathUtil.clamp(output, -Constants.MAX_VOLTAGE, Constants.MAX_VOLTAGE);
+    output = MathUtil.clamp(output, -Constants.MAX_VOLTAGE, Constants.MAX_VOLTAGE);
 
-		sim.setInputVoltage(output);
+    sim.setInputVoltage(output);
 
-		if (output == 0.0)
-			sim.setState(sim.getAngleRads(), sim.getVelocityRadPerSec() / 2.0);
-	}
+    if (output == 0.0) sim.setState(sim.getAngleRads(), sim.getVelocityRadPerSec() / 2.0);
+  }
 
-	public void setControl(VoltageOut request) {
-		targetVoltage = request.Output;
-		control = ControlMode.VOLTAGE;
-	}
+  public void setControl(VoltageOut request) {
+    targetVoltage = request.Output;
+    control = ControlMode.VOLTAGE;
+  }
 
-	/**
-	 * @param request
-	 *            position should be in Rotations
-	 */
-	public void setControl(MotionMagicVoltage request) {
-		targetPosition = Units.Rotations.of(request.Position);
-		control = ControlMode.POSITION;
-	}
+  /**
+   * @param request position should be in Rotations
+   */
+  public void setControl(MotionMagicVoltage request) {
+    targetPosition = Units.Rotations.of(request.Position);
+    control = ControlMode.POSITION;
+  }
 
-	public Voltage getVoltage() {
-		return Units.Volts.of(output);
-	}
+  public Voltage getVoltage() {
+    return Units.Volts.of(output);
+  }
 
-	public AngularVelocity getVelocity() {
-		return Units.RadiansPerSecond.of(sim.getVelocityRadPerSec());
-	}
+  public AngularVelocity getVelocity() {
+    return Units.RadiansPerSecond.of(sim.getVelocityRadPerSec());
+  }
 
-	public Angle getPosition() {
-		return Units.Radians.of(sim.getAngleRads());
-	}
+  public Angle getPosition() {
+    return Units.Radians.of(sim.getAngleRads());
+  }
 
-	public void setConfig(TalonFXConfiguration config) {
-		Slot0Configs slot0Configs = config.Slot0;
-		MotionMagicConfigs mmConfigs = config.MotionMagic;
+  public void setConfig(TalonFXConfiguration config) {
+    Slot0Configs slot0Configs = config.Slot0;
+    MotionMagicConfigs mmConfigs = config.MotionMagic;
 
-		kG = slot0Configs.kG;
+    kG = slot0Configs.kG;
 
-		feedback.setPID(slot0Configs.kP, slot0Configs.kI, slot0Configs.kD);
-		feedback.setConstraints(
-		        new Constraints(mmConfigs.MotionMagicCruiseVelocity, mmConfigs.MotionMagicAcceleration));
-	}
+    feedback.setPID(slot0Configs.kP, slot0Configs.kI, slot0Configs.kD);
+    feedback.setConstraints(
+        new Constraints(mmConfigs.MotionMagicCruiseVelocity, mmConfigs.MotionMagicAcceleration));
+  }
 
-	public void setState(double angleRadians, double velocityRadPerSec) {
-		sim.setState(angleRadians, velocityRadPerSec);
-	}
+  public void setState(double angleRadians, double velocityRadPerSec) {
+    sim.setState(angleRadians, velocityRadPerSec);
+  }
 }
