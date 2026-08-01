@@ -98,6 +98,6 @@ public class DriveConstants {
 	        MODULE_TRANSLATIONS);
 
 	// Robot Crawl max speeds
-	// 0.001 = Target of 14inches per 5 seconds
-	public static final double robotCrawlModifier = 0.001;
+	// 0.05 = lowest possible speed after upping the value 
+	public static final double robotCrawlModifier = 0.05;
 }
