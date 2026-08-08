@@ -45,8 +45,9 @@ public class VisionConstants {
       new Transform3d(0, 2.5, 0.0, new Rotation3d(0.0, -0.2, 0.0));
 
   // Basic filtering thresholds
-  public static double maxAmbiguity = 0.225;
-  public static double maxZError = 0.75;
+  public static double maxAmbiguity = 0.15;
+  public static double maxZError = 0.17;
+  public static double minZError = 0.0;
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)
@@ -57,9 +58,9 @@ public class VisionConstants {
   // (Adjust to trust some cameras more than others)
   public static double[] cameraStdDevFactors =
       new double[] {
-        0.004, // Camera 0, backElectronicsSide
-        0.004, // Camera 1, backTurretSide
-        0.1474 // Camera 2, backCenter
+        0.025, // Camera 0, backElectronicsSide
+        0.0269, // Camera 1, backTurretSide
+        0.0281 // Camera 2, backCenter
       };
 
   // Multipliers to apply for MegaTag 2 observations
