@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-import static frc.robot.subsystems.drive.DriveConstants.ppConfig;
 import static frc.robot.subsystems.vision.VisionConstants.backCenterCamera;
 import static frc.robot.subsystems.vision.VisionConstants.backCenterToRobot;
 import static frc.robot.subsystems.vision.VisionConstants.backElectronicsCamera;
@@ -42,6 +41,7 @@ import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeIOReal;
 import frc.robot.subsystems.Intake.IntakeIOSim;
+import frc.robot.subsystems.autos.Factory;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
@@ -61,7 +61,6 @@ import java.io.IOException;
 import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import choreo.*;
-import choreo.auto.AutoFactory;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -87,70 +86,59 @@ public class RobotContainer {
 	private final LoggedDashboardChooser<Command> autoChooser;
 
 	// Choreo Auto Factory
+	private final Factory autoFactory;
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
 		switch (Constants.currentMode) {
-			case REAL:
+			case REAL :
 				// Real robot, instantiate hardware IO implementations
 				drive = new Drive(new GyroIOPigeon2(), new ModuleIOSpark(0), new ModuleIOSpark(1), new ModuleIOSpark(2),
-						new ModuleIOSpark(3));
+				        new ModuleIOSpark(3));
 
 				intake = new Intake(new IntakeIOReal());
 				elevator = new Elevator(new ElevatorIOReal());
 				shooter = new Shooter(new ShooterIOReal());
 
 				vision = new Vision(drive::addVisionMeasurement,
-						new VisionIOPhotonVision(backElectronicsCamera, backElectronicsCameraToRobot),
-						new VisionIOPhotonVision(backTurretCamera, backTurretCameraToRobot),
-						new VisionIOPhotonVision(backCenterCamera, backCenterToRobot));
+				        new VisionIOPhotonVision(backElectronicsCamera, backElectronicsCameraToRobot),
+				        new VisionIOPhotonVision(backTurretCamera, backTurretCameraToRobot),
+				        new VisionIOPhotonVision(backCenterCamera, backCenterToRobot));
 				break;
 
-			case SIM:
+			case SIM :
 				// Sim robot, instantiate physics sim IO implementations
-				drive = new Drive(new GyroIO() {
-				}, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(),
-						new ModuleIOSim());
+				drive = new Drive(new GyroIO() {}, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(),
+				        new ModuleIOSim());
 				intake = new Intake(new IntakeIOSim());
 				elevator = new Elevator(new ElevatorIOSim());
 				shooter = new Shooter(new ShooterIOSim());
 				vision = new Vision(drive::addVisionMeasurement,
-						new VisionIOPhotonVisionSim(backElectronicsCamera, backElectronicsCameraToRobot,
-								drive::getPose),
-						new VisionIOPhotonVisionSim(backTurretCamera, backTurretCameraToRobot, drive::getPose),
-						new VisionIOPhotonVisionSim(backCenterCamera, backCenterToRobot, drive::getPose));
+				        new VisionIOPhotonVisionSim(backElectronicsCamera, backElectronicsCameraToRobot,
+				                drive::getPose),
+				        new VisionIOPhotonVisionSim(backTurretCamera, backTurretCameraToRobot, drive::getPose),
+				        new VisionIOPhotonVisionSim(backCenterCamera, backCenterToRobot, drive::getPose));
 
 				break;
 
-			default:
+			default :
 				// Replayed robot, disable IO implementations
-				drive = new Drive(new GyroIO() {
-				}, new ModuleIO() {
-				}, new ModuleIO() {
-				}, new ModuleIO() {
-				},
-						new ModuleIO() {
-						});
-				intake = new Intake(new IntakeIO() {
-				});
-				elevator = new Elevator(new ElevatorIO() {
-				});
-				shooter = new Shooter(new ShooterIO() {
-				});
-				vision = new Vision(drive::addVisionMeasurement, new VisionIO() {
-				}, new VisionIO() {
-				});
+				drive = new Drive(new GyroIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {},
+				        new ModuleIO() {});
+				intake = new Intake(new IntakeIO() {});
+				elevator = new Elevator(new ElevatorIO() {});
+				shooter = new Shooter(new ShooterIO() {});
+				vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
 				break;
 		}
 
-
-
-
-		//====================================================================
+		// ====================================================================
 
 		// Set up auto routines
+		autoFactory = new Factory(drive);
+
 		autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
 		// Set up SysId routines
@@ -204,6 +192,7 @@ public class RobotContainer {
 			// Center Depot Shoot for collecting from the depot and then shooting fuel
 			PathPlannerPath centerDepotShoot = PathPlannerPath.fromPathFile("Center_Depot_Shoot");
 
+			autoChooser.addOption("Baby's First Cheoreo auto", autoFactory.babysFirstAuto());
 			// ------------------------ Center Hub Shoot Auto
 			// --------------------------------------------------------------------
 			autoChooser.addOption("Center Hub Shoot",
