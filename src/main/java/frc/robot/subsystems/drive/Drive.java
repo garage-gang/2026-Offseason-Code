@@ -15,10 +15,13 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
+
+import choreo.trajectory.SwerveSample;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -59,7 +62,10 @@ public class Drive extends SubsystemBase {
 	        new SwerveModulePosition[]{new SwerveModulePosition(), new SwerveModulePosition(),
 	                new SwerveModulePosition(), new SwerveModulePosition()};
 	private SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(kinematics, rawGyroRotation,
-	        lastModulePositions, Pose2d.kZero);
+			lastModulePositions, Pose2d.kZero);
+			
+
+
 
 	public Drive(GyroIO gyroIO, ModuleIO flModuleIO, ModuleIO frModuleIO, ModuleIO blModuleIO, ModuleIO brModuleIO) {
 		this.gyroIO = gyroIO;
@@ -73,6 +79,8 @@ public class Drive extends SubsystemBase {
 
 		// Start odometry thread
 		SparkOdometryThread.getInstance().start();
+
+		headingController.enableContinuousInput(-Math.PI, Math.PI);
 
 		// Configure AutoBuilder for PathPlanner
 		AutoBuilder.configure(this::getPose, this::setPose, this::getChassisSpeeds, this::runVelocity,
@@ -290,4 +298,6 @@ public class Drive extends SubsystemBase {
 	public double getMaxAngularSpeedRadPerSec() {
 		return MAX_SPEED_METERS_PER_SEC / DRIVE_BASE_RADIUS;
 	}
+
+
 }

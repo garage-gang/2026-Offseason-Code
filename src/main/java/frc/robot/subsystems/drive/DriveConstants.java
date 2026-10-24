@@ -98,6 +98,6 @@ public class DriveConstants {
 	        MODULE_TRANSLATIONS);
 
 	// Robot Crawl max speeds
-	// 0.05 = lowest possible speed after upping the value 
+	// 0.05 = lowest possible speed after upping the value
 	public static final double robotCrawlModifier = 0.05;
 }

@@ -96,9 +96,14 @@ public class Vision extends SubsystemBase {
 			for (var observation : inputs[cameraIndex].poseObservations) {
 				// Check whether to reject pose
 				boolean rejectPose = observation.tagCount() == 0 // Must have at least one tag
-				        || (observation.tagCount() == 1 && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
-				        || Math.abs(observation.pose().getZ()) > positiveZError || Math.abs(observation.pose().getZ()) < negitiveZError// Must have realistic Z coordinate
-                || DriverStation.getMatchTime() < matchTime && DriverStation.isAutonomous() // Does not detect for the first seconds of the match
+				        || (observation.tagCount() == 1 && observation.ambiguity() > maxAmbiguity) // Cannot be high
+				                                                                                   // ambiguity
+				        || Math.abs(observation.pose().getZ()) > positiveZError
+				        || Math.abs(observation.pose().getZ()) < negitiveZError// Must have realistic Z coordinate
+				        || DriverStation.getMatchTime() < matchTime && DriverStation.isAutonomous() // Does not detect
+				                                                                                    // for the first
+				                                                                                    // seconds of the
+				                                                                                    // match
 						// Must be within the field boundaries
 				        || observation.pose().getX() < 0.0
 				        || observation.pose().getX() > aprilTagLayout.getFieldLength()

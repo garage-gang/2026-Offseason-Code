@@ -235,6 +235,20 @@ public class DriveCommands {
 			                                + formatter.format(Units.metersToInches(wheelRadius)) + " inches");
 		                        })));
 	}
+	/**
+	 * Field relative drive command taking PID outputs from auto factory (controlling linear and
+	 * angular velocities).
+	 */
+	public static Command autoDrive(Drive drive, ChassisSpeeds velocities) {
+		return Commands.run(() -> {
+			// Convert to field relative speeds & send command
+			boolean isFlipped = DriverStation.getAlliance().isPresent()
+					&& DriverStation.getAlliance().get() == Alliance.Red;
+			drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(velocities,
+					isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation()));
+		}, drive);
+	}
+	
 
 	private static class WheelRadiusCharacterizationState {
 		double[] positions = new double[4];
