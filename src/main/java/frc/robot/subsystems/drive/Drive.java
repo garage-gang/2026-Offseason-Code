@@ -55,6 +55,9 @@ public class Drive extends SubsystemBase {
 	private final SysIdRoutine sysId;
 	private final Alert gyroDisconnectedAlert = new Alert("Disconnected gyro, using kinematics as fallback.",
 	        AlertType.kError);
+	private final PIDController autoXController = new PIDController(DRIVE_KP, 0, DRIVE_KD);
+	private final PIDController autoYController = new PIDController(DRIVE_KP, 0.0, DRIVE_KD);
+	private final PIDController autoHeadingController = new PIDController(turnKp, 0, turnKd);
 
 	private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(MODULE_TRANSLATIONS);
 	private Rotation2d rawGyroRotation = Rotation2d.kZero;
@@ -62,10 +65,7 @@ public class Drive extends SubsystemBase {
 	        new SwerveModulePosition[]{new SwerveModulePosition(), new SwerveModulePosition(),
 	                new SwerveModulePosition(), new SwerveModulePosition()};
 	private SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(kinematics, rawGyroRotation,
-			lastModulePositions, Pose2d.kZero);
-			
-
-
+	        lastModulePositions, Pose2d.kZero);
 
 	public Drive(GyroIO gyroIO, ModuleIO flModuleIO, ModuleIO frModuleIO, ModuleIO blModuleIO, ModuleIO brModuleIO) {
 		this.gyroIO = gyroIO;
@@ -80,7 +80,7 @@ public class Drive extends SubsystemBase {
 		// Start odometry thread
 		SparkOdometryThread.getInstance().start();
 
-		headingController.enableContinuousInput(-Math.PI, Math.PI);
+		autoHeadingController.enableContinuousInput(-Math.PI, Math.PI);
 
 		// Configure AutoBuilder for PathPlanner
 		AutoBuilder.configure(this::getPose, this::setPose, this::getChassisSpeeds, this::runVelocity,
@@ -299,5 +299,18 @@ public class Drive extends SubsystemBase {
 		return MAX_SPEED_METERS_PER_SEC / DRIVE_BASE_RADIUS;
 	}
 
+	public void followTrajectory(SwerveSample sample) {
+		// get pose
+		Pose2d pose = getPose();
+
+		// create velocities for robot
+		ChassisSpeeds speeds = new ChassisSpeeds(sample.vx + autoXController.calculate(pose.getX(), sample.x),
+		        sample.vy + autoYController.calculate(pose.getY(), sample.y),
+		        sample.omega + autoHeadingController.calculate(pose.getRotation().getRadians(), sample.heading));
+
+		// var temp = velocities.vxMetersPerSecond;
+		runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getRotation()));
+
+	}
 
 }
