@@ -137,7 +137,7 @@ public class RobotContainer {
 		// ====================================================================
 
 		// Set up auto routines
-		autoFactory = new Factory(drive);
+		autoFactory = new Factory(drive, shooter, intake, elevator);
 
 		autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -193,6 +193,11 @@ public class RobotContainer {
 			PathPlannerPath centerDepotShoot = PathPlannerPath.fromPathFile("Center_Depot_Shoot");
 
 			autoChooser.addOption("Baby's First Cheoreo auto", autoFactory.babysFirstAuto());
+			autoChooser.addOption("Ignore", autoFactory.middleShootAuto());
+			autoChooser.addOption("Middle Shoot", autoFactory.middleShootChor());
+			autoChooser.addOption("Left Trench Loop", autoFactory.leftTrenchShootAuto());
+			autoChooser.addOption("Right Trench Loop", autoFactory.rightTrenchShootAuto());
+
 			// ------------------------ Center Hub Shoot Auto
 			// --------------------------------------------------------------------
 			autoChooser.addOption("Center Hub Shoot",
