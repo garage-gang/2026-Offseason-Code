@@ -15,7 +15,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class DriveConstants {
-	public static final double MAX_SPEED_METERS_PER_SEC = 4.46;
+	public static final double MAX_SPEED_METERS_PER_SEC = 0.5;
 	public static final double ODOMETRY_FREQUENCY = 100.0; // Hz
 	public static final double TRACK_WIDTH = Units.inchesToMeters(22.0);
 	public static final double WHEEL_BASE = Units.inchesToMeters(22.0);
@@ -98,6 +98,6 @@ public class DriveConstants {
 	        MODULE_TRANSLATIONS);
 
 	// Robot Crawl max speeds
-	// 0.05 = lowest possible speed after upping the value 
+	// 0.05 = lowest possible speed after upping the value
 	public static final double robotCrawlModifier = 0.05;
 }
