@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.OutreachShooterCommand;
 import frc.robot.commands.TuningDriveCommands;
 import frc.robot.commands.PrimeShootCommand;
 import frc.robot.commands.PrimeShootCommand.ShootingType;
@@ -334,6 +335,14 @@ public class RobotContainer {
 		        .runOnce(() -> drive.setPose(new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)), drive)
 		        .ignoringDisable(true));
 
+		// Rolls the roller to make it intake fuel
+		driverController.rightBumper().whileTrue(Commands.run(() -> intake.intakeFuel()))
+		        .onFalse(Commands.runOnce(() -> intake.stopRoller()));
+
+		// Rolls the roller to make it push out fuel
+		driverController.leftBumper().whileTrue(Commands.run(() -> intake.releaseFuel()))
+		        .onFalse(Commands.runOnce(() -> intake.stopRoller()));
+
 		// Button Bindings for robot crawl mode
 		driverController.povUp()
 		        .whileTrue(TuningDriveCommands.dpadDrive(drive, DriveConstants.robotCrawlModifier, 0.0));
@@ -368,35 +377,38 @@ public class RobotContainer {
 		coDriverController.leftTrigger(0.01)
 		        .whileTrue(Commands.run(() -> intake.setExtenderVoltage(coDriverController.getLeftTriggerAxis() * 2)))
 		        .onFalse(Commands.runOnce(() -> intake.setExtenderVoltage(0)));
-		// Rolls the roller to make it intake fuel
-		driverController.rightBumper().whileTrue(Commands.run(() -> intake.intakeFuel()))
-		        .onFalse(Commands.runOnce(() -> intake.stopRoller()));
 
-		// Rolls the roller to make it push out fuel
-		driverController.leftBumper().whileTrue(Commands.run(() -> intake.releaseFuel()))
-		        .onFalse(Commands.runOnce(() -> intake.stopRoller()));
+		shooter.setDefaultCommand(new OutreachShooterCommand(shooter, () -> coDriverController.getLeftX(),
+		        () -> coDriverController.getRightY()));
+		coDriverController.a().whileTrue(Commands.run(() -> elevator.setElevatorVoltage(6)))
+		        .onFalse(Commands.runOnce(() -> elevator.setElevatorVoltage(0)));
 
 		TuningDriveCommands.dpadDrive(drive, falseYSignal, falseXSignal);
 
-		PrimeShootCommand primeShootCommand = new PrimeShootCommand(shooter, drive, intake, ShootingType.HUB_SHOOT);
+		// PrimeShootCommand primeShootCommand = new PrimeShootCommand(shooter, drive,
+		// intake, ShootingType.HUB_SHOOT);
 
-		PrimeShootCommand simplePrimeShootCommand = new PrimeShootCommand(shooter, drive, intake,
-		        ShootingType.SIMPLE_SHOOT);
-		PrimeShootCommand alliancePrimeShootCommand = new PrimeShootCommand(shooter, drive, intake,
-		        ShootingType.ALLIANCE_SHOOT);
-		PrimeShootCommand trenchPrimeShootCommand = new PrimeShootCommand(shooter, drive, intake,
-		        ShootingType.TRENCH_SHOT);
+		// PrimeShootCommand simplePrimeShootCommand = new PrimeShootCommand(shooter,
+		// drive, intake,
+		// ShootingType.SIMPLE_SHOOT);
+		// PrimeShootCommand alliancePrimeShootCommand = new PrimeShootCommand(shooter,
+		// drive, intake,
+		// ShootingType.ALLIANCE_SHOOT);
+		// PrimeShootCommand trenchPrimeShootCommand = new PrimeShootCommand(shooter,
+		// drive, intake,
+		// ShootingType.TRENCH_SHOT);
 
-		coDriverController.povRight().whileTrue(primeShootCommand);
+		// coDriverController.povRight().whileTrue(primeShootCommand);
 
-		coDriverController.povLeft().whileTrue(alliancePrimeShootCommand);
+		// coDriverController.povLeft().whileTrue(alliancePrimeShootCommand);
 
-		coDriverController.x().whileTrue(trenchPrimeShootCommand);
+		// coDriverController.x().whileTrue(trenchPrimeShootCommand);
 
-		coDriverController.leftBumper().whileTrue(simplePrimeShootCommand);
+		// coDriverController.leftBumper().whileTrue(simplePrimeShootCommand);
 
-		coDriverController.a().whileTrue(
-		        new ShootCommand(elevator, primeShootCommand, simplePrimeShootCommand, alliancePrimeShootCommand));
+		// coDriverController.a().whileTrue(
+		// new ShootCommand(elevator, primeShootCommand, simplePrimeShootCommand,
+		// alliancePrimeShootCommand));
 	}
 
 	public static double getTimeLeftUntilSwitch() {
