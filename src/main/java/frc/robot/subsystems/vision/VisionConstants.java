@@ -11,7 +11,6 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.wpilibj.DriverStation;
 
 public class VisionConstants {
 	// AprilTag layout
@@ -49,9 +48,8 @@ public class VisionConstants {
 	public static double maxAmbiguity = 0.15;
 	public static double positiveZError = 0.17;
 	public static double negitiveZError = 0.0;
-  public static double maxRobotRoll = 0.17; // Max accepted roll in pose rejection
-  	public static double matchTime = 17;
-
+	public static double maxRobotRoll = 0.17; // Max accepted roll in pose rejection
+	public static double matchTime = 17;
 
 	// Standard deviation baselines, for 1 meter distance and 1 tag
 	// (Adjusted automatically based on distance and # of tags)
