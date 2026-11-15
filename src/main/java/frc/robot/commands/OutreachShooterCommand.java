@@ -15,13 +15,16 @@ public class OutreachShooterCommand extends Command {
 	private Shooter shooter;
 	private DoubleSupplier xSupplier;
 	private DoubleSupplier ySupplier;
+	private DoubleSupplier supplier;
 
-	public OutreachShooterCommand(Shooter shooter, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+	public OutreachShooterCommand(Shooter shooter, DoubleSupplier xSupplier, DoubleSupplier ySupplier,
+	        DoubleSupplier supplier) {
 		// Use addRequirements() here to declare subsystem dependencies.
 		this.shooter = shooter;
 		addRequirements(shooter);
 		this.ySupplier = ySupplier;
 		this.xSupplier = xSupplier;
+		this.supplier = supplier;
 
 	}
 
@@ -33,8 +36,8 @@ public class OutreachShooterCommand extends Command {
 	@Override
 	public void execute() {
 
-		shooter.setRotationVoltage(xSupplier.getAsDouble() * -6);
-		shooter.setWheelVel(Units.RPM.of(2000));
+		shooter.setRotationVoltage(xSupplier.getAsDouble() * -2.5);
+		shooter.setWheelVel(Units.RPM.of((supplier.getAsDouble() * 2000) + 2000));
 		shooter.setHoodVoltage(ySupplier.getAsDouble() * -4);
 
 	}

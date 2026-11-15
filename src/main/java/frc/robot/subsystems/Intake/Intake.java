@@ -122,7 +122,7 @@ public class Intake extends SubsystemBase {
 	}
 
 	public void retractExtender() {
-		setExtenderPos(Rotation2d.kZero);
+		setExtenderPos(Rotation2d.fromDegrees(40));
 	}
 
 	public void releaseFuel() {
