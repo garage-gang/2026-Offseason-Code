@@ -169,7 +169,7 @@ public final class Constants {
 
 		public final class RotationConstants {
 			public static final Rotation2d MIN_ROTATION_ANGLE = Rotation2d.fromDegrees(0);
-			public static final Rotation2d MAX_ROTATION_ANGLE = Rotation2d.fromDegrees(390);
+			public static final Rotation2d MAX_ROTATION_ANGLE = Rotation2d.fromDegrees(230);
 			public static final double ROTATION_MOI = 0.1;
 			public static final double STATOR_CURRENT_LIMIT = 20;
 			public static final double SUPPLY_CURRENT_LIMIT = 20;
