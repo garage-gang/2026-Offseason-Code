@@ -361,9 +361,10 @@ public class RobotContainer {
 		// retract the intake when dpad up is pressed
 		coDriverController.povUp().whileTrue(Commands.run(() -> intake.retractExtender()));
 		// manually extends the intake to desired location via voltages
-		coDriverController.rightTrigger(0.01)
-		        .whileTrue(Commands.run(() -> intake.setExtenderVoltage(coDriverController.getRightTriggerAxis() * -2)))
-		        .onFalse(Commands.runOnce(() -> intake.setExtenderVoltage(0)));
+		// coDriverController.rightTrigger(0.01)
+		// .whileTrue(Commands.run(() ->
+		// intake.setExtenderVoltage(coDriverController.getRightTriggerAxis() * -2)))
+		// .onFalse(Commands.runOnce(() -> intake.setExtenderVoltage(0)));
 
 		coDriverController.rightBumper().whileTrue(Commands.repeatingSequence(
 		        Commands.runOnce(() -> intake.setExtenderPos(Rotation2d.fromDegrees(30))), Commands.waitSeconds(1),
@@ -379,7 +380,7 @@ public class RobotContainer {
 		        .onFalse(Commands.runOnce(() -> intake.setExtenderVoltage(0)));
 
 		shooter.setDefaultCommand(new OutreachShooterCommand(shooter, () -> coDriverController.getLeftX(),
-		        () -> coDriverController.getRightY()));
+		        () -> coDriverController.getRightY(), () -> coDriverController.getRightTriggerAxis()));
 		coDriverController.a().whileTrue(Commands.run(() -> elevator.setElevatorVoltage(6)))
 		        .onFalse(Commands.runOnce(() -> elevator.setElevatorVoltage(0)));
 
