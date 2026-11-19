@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.OutreachShooterCommand;
@@ -43,7 +44,6 @@ import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeIOReal;
 import frc.robot.subsystems.Intake.IntakeIOSim;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
@@ -78,7 +78,7 @@ public class RobotContainer {
 	private final Vision vision;
 	// Controller
 	private final CommandXboxController driverController = new CommandXboxController(0);
-	private final CommandXboxController coDriverController = new CommandXboxController(1);
+	private final CommandJoystick coDriverController = new CommandJoystick(1);
 	private double falseXSignal;
 	private double falseYSignal;
 	// Dashboard inputs
@@ -344,44 +344,51 @@ public class RobotContainer {
 		        .onFalse(Commands.runOnce(() -> intake.stopRoller()));
 
 		// Button Bindings for robot crawl mode
-		driverController.povUp()
-		        .whileTrue(TuningDriveCommands.dpadDrive(drive, DriveConstants.robotCrawlModifier, 0.0));
-		driverController.povDown()
-		        .whileTrue(TuningDriveCommands.dpadDrive(drive, -1 * DriveConstants.robotCrawlModifier, 0.0));
-		driverController.povLeft()
-		        .whileTrue(TuningDriveCommands.dpadDrive(drive, 0.0, DriveConstants.robotCrawlModifier));
-		driverController.povRight()
-		        .whileTrue(TuningDriveCommands.dpadDrive(drive, 0.0, -1 * DriveConstants.robotCrawlModifier));
+		// driverController.povUp()
+		// .whileTrue(TuningDriveCommands.dpadDrive(drive,
+		// DriveConstants.robotCrawlModifier, 0.0));
+		// driverController.povDown()
+		// .whileTrue(TuningDriveCommands.dpadDrive(drive, -1 *
+		// DriveConstants.robotCrawlModifier, 0.0));
+		// driverController.povLeft()
+		// .whileTrue(TuningDriveCommands.dpadDrive(drive, 0.0,
+		// DriveConstants.robotCrawlModifier));
+		// driverController.povRight()
+		// .whileTrue(TuningDriveCommands.dpadDrive(drive, 0.0, -1 *
+		// DriveConstants.robotCrawlModifier));
 
-		coDriverController.b().whileTrue(Commands.run(() -> elevator.setElevatorVoltage(-8)))
+		coDriverController.trigger().whileTrue(Commands.run(() -> elevator.setElevatorVoltage(8)))
 		        .onFalse(Commands.runOnce(() -> elevator.setElevatorVoltage(0)));
 
 		// extend the extender to out position when dpad down button is pressed
-		coDriverController.povDown().whileTrue(Commands.run(() -> intake.extendExtender()));
+		driverController.povDown().whileTrue(Commands.run(() -> intake.extendExtender()));
 		// retract the intake when dpad up is pressed
-		coDriverController.povUp().whileTrue(Commands.run(() -> intake.retractExtender()));
+		driverController.povUp().whileTrue(Commands.run(() -> intake.retractExtender()));
 		// manually extends the intake to desired location via voltages
 		// coDriverController.rightTrigger(0.01)
 		// .whileTrue(Commands.run(() ->
 		// intake.setExtenderVoltage(coDriverController.getRightTriggerAxis() * -2)))
 		// .onFalse(Commands.runOnce(() -> intake.setExtenderVoltage(0)));
 
-		coDriverController.rightBumper().whileTrue(Commands.repeatingSequence(
-		        Commands.runOnce(() -> intake.setExtenderPos(Rotation2d.fromDegrees(30))), Commands.waitSeconds(1),
-		        Commands.runOnce(() -> intake.setExtenderPos(Rotation2d.fromDegrees(75))), Commands.waitSeconds(1))
-		        .alongWith(Commands.run(() -> intake.setRollerVoltage(-12))))
-		        .onFalse(Commands.runOnce(() -> intake.setRollerVoltage(0)));
+		// coDriverController.button(3).whileTrue(Commands.repeatingSequence(
+		// Commands.runOnce(() -> intake.setExtenderPos(Rotation2d.fromDegrees(30))),
+		// Commands.waitSeconds(1),
+		// Commands.runOnce(() -> intake.setExtenderPos(Rotation2d.fromDegrees(75))),
+		// Commands.waitSeconds(1))
+		// .alongWith(Commands.run(() -> intake.setRollerVoltage(-12))))
+		// .onFalse(Commands.runOnce(() -> intake.setRollerVoltage(0)));
 
 		// manually retracts the intake to desired location via voltages
 		// double LTriggerVal = coDriverController.getLeftTriggerAxis();
 		// intake.setExtenderVoltage(4 * LTriggerVal);
-		coDriverController.leftTrigger(0.01)
-		        .whileTrue(Commands.run(() -> intake.setExtenderVoltage(coDriverController.getLeftTriggerAxis() * 2)))
-		        .onFalse(Commands.runOnce(() -> intake.setExtenderVoltage(0)));
+		// coDriverController.leftTrigger(0.01)
+		// .whileTrue(Commands.run(() ->
+		// intake.setExtenderVoltage(coDriverController.getLeftTriggerAxis() * 2)))
+		// .onFalse(Commands.runOnce(() -> intake.setExtenderVoltage(0)));
 
-		shooter.setDefaultCommand(new OutreachShooterCommand(shooter, () -> coDriverController.getLeftX(),
-		        () -> coDriverController.getRightY(), () -> coDriverController.getRightTriggerAxis()));
-		coDriverController.a().whileTrue(Commands.run(() -> elevator.setElevatorVoltage(6)))
+		shooter.setDefaultCommand(new OutreachShooterCommand(shooter, () -> coDriverController.getX(),
+		        () -> coDriverController.getY(), () -> driverController.getRightTriggerAxis()));
+		coDriverController.button(2).whileTrue(Commands.run(() -> elevator.setElevatorVoltage(6)))
 		        .onFalse(Commands.runOnce(() -> elevator.setElevatorVoltage(0)));
 
 		TuningDriveCommands.dpadDrive(drive, falseYSignal, falseXSignal);
