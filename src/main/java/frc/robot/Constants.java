@@ -44,8 +44,8 @@ public final class Constants {
 			public static final double GEAR_RATIO = 45; // will need to be changed ALOT
 			public static final Rotation2d MAX_EXTENDER_ANGLE = Rotation2d.fromDegrees(125);
 			public static final Rotation2d MIN_EXTENDER_ANGLE = Rotation2d.fromDegrees(0);
-			public static final double SUPPLY_CURRENT_LIMIT = 40;
-			public static final double STATOR_CURRENT_LIMIT = 40;
+			public static final double SUPPLY_CURRENT_LIMIT = 26;
+			public static final double STATOR_CURRENT_LIMIT = 20;
 			public static final double SUPPLY_VOLTAGE_TIME = 0.02;
 			public static final double EXTENDER_MOI = 0.1;
 			public static final Distance EXTENDER_LENGTH = Units.Inches.of(12.5);
@@ -168,8 +168,8 @@ public final class Constants {
 		}
 
 		public final class RotationConstants {
-			public static final Rotation2d MIN_ROTATION_ANGLE = Rotation2d.fromDegrees(0);
-			public static final Rotation2d MAX_ROTATION_ANGLE = Rotation2d.fromDegrees(230);
+			public static final Rotation2d MIN_ROTATION_ANGLE = Rotation2d.fromDegrees(45);
+			public static final Rotation2d MAX_ROTATION_ANGLE = Rotation2d.fromDegrees(355);
 			public static final double ROTATION_MOI = 0.1;
 			public static final double STATOR_CURRENT_LIMIT = 20;
 			public static final double SUPPLY_CURRENT_LIMIT = 20;
