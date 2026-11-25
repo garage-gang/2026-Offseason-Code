@@ -36,9 +36,9 @@ public class OutreachShooterCommand extends Command {
 	@Override
 	public void execute() {
 
-		shooter.setRotationVoltage((xSupplier.getAsDouble() + 0.008) * -2.5);
-		shooter.setWheelVel(Units.RPM.of((supplier.getAsDouble() * 2000) + 2000));
-		shooter.setHoodVoltage((ySupplier.getAsDouble() + 0.008) * -4);
+		shooter.setRotationVoltage((xSupplier.getAsDouble() + 0.008) * -1);
+		shooter.setWheelVel(Units.RPM.of((supplier.getAsDouble() * 2500) + 1000));
+		shooter.setHoodVoltage((ySupplier.getAsDouble() + 0.008) * -1);
 
 	}
 
